@@ -2,10 +2,10 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Net.Glow.Studios.Core.Entities.Base;
 using Net.Glow.Studios.Core.Enums.Base;
-using NetGlowStudios.Database.DBContexts;
-using NetGlowStudios.Database.Repositories.Base.Interfaces;
+using Net.Glow.Studios.Database.DBContexts;
+using Net.Glow.Studios.Database.Repositories.Base.Interfaces;
 
-namespace NetGlowStudios.Database.Repositories.Base;
+namespace Net.Glow.Studios.Database.Repositories.Base;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
 {

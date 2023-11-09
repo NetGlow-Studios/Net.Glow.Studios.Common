@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace NetGlowStudios.Database.DBContexts;
+namespace Net.Glow.Studios.Database.DBContexts;
 
 public class ApplicationDbContext : DbContext
 {

@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Glow.Studios.Core", "Net.Glow.Studios.Core\Net.Glow.Studios.Core.csproj", "{13923F10-F4B1-43FE-B1EC-2CFA052AF198}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetGlowStudios.Database", "NetGlowStudios.Database\NetGlowStudios.Database.csproj", "{2AD46FC7-2C3B-4451-965A-91F3C1092ED1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Glow.Studios.Database", "Net.Glow.Studios.Database\Net.Glow.Studios.Database.csproj", "{2AD46FC7-2C3B-4451-965A-91F3C1092ED1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

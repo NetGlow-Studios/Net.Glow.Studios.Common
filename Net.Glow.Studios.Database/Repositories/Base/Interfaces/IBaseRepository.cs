@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Net.Glow.Studios.Core.Enums.Base;
 
-namespace NetGlowStudios.Database.Repositories.Base.Interfaces;
+namespace Net.Glow.Studios.Database.Repositories.Base.Interfaces;
 
 public interface IBaseRepository<T>
 {
