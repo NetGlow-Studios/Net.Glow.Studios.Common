@@ -13,4 +13,9 @@ public static class StringExtensions
         Console.Write(str);
         return str;
     }
+
+    public static string[] SplitByCapitalLetter(this string str)
+    {
+        return Array.Empty<string>();
+    }
 }
