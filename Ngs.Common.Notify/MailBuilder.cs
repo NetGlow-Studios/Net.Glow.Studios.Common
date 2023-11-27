@@ -21,7 +21,7 @@ public class MailBuilder
         To = new List<string>();
         Cc = new List<string>();
         Attachments = new List<Attachment>();
-        MailBodyBuilder = new MailBodyBuilder();
+        MailBodyBuilder = new MailBodyBuilder(subject);
     }
 
     public void AddAttachment(Stream stream, ContentType? contentType = default) 
@@ -52,6 +52,8 @@ public class MailBuilder
         IsBodyHtml = true;
     }
 
+    public string GetSubject() => Subject;
+    
     public IReadOnlyCollection<string> GetTo() => To.ToList();
     public IReadOnlyCollection<string> GetCc() => Cc.ToList();
     public IReadOnlyCollection<Attachment> GetAttachments() => Attachments.ToList();

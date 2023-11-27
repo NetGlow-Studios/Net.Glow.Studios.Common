@@ -5,212 +5,75 @@ namespace Net.Glow.Studios.Common.Notify;
 public class MailBodyBuilder
 {
     private HtmlDocument HtmlDocument { get; }
-    
-    public MailBodyBuilder()
+
+    public MailBodyBuilder(string title)
     {
         HtmlDocument = new HtmlDocument();
-        HtmlDocument.Load(File.OpenText(Path.Combine(Directory.GetCurrentDirectory(), "Templates","htmlTemplate.html")));
+        HtmlDocument.Load(File.OpenText(Path.Combine(Directory.GetCurrentDirectory(), "Templates", "htmlTemplate.html")));
+        HtmlDocument.DocumentNode.SelectSingleNode("//title").InnerHtml = title;
     }
 
-    public MailBodyBuilder(string body) : this()
+    public MailBodyBuilder(string title, string body) : this(title)
     {
-    }
-
-    public void AddClass(string className, params string[] styles)
-    {
-        var stylesNode = HtmlDocument.DocumentNode.SelectSingleNode("//styles") ?? HtmlNode.CreateNode("style");
     }
     
+    public override string ToString() => HtmlDocument.DocumentNode.InnerHtml;
+
+    public void AddClass(string className, IEnumerable<string> styles)
+    {
+        var stylesNode = HtmlDocument.DocumentNode.SelectSingleNode("//styles") ?? HtmlNode.CreateNode("<style></style>");
+        
+        var style = string.Empty;
+        styles.ToList().ForEach(x => style += $"{x};");
+
+        stylesNode.InnerHtml += $".{className}{{{style}}}";
+    }
+
     #region Headers
-    public void AddH1(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<h1></h1>");
 
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
+    public void AddH1(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "h1", classes, styles));
+    public void AddH2(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "h2", classes, styles));
+    public void AddH3(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "h3", classes, styles));
+    public void AddH4(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "h4", classes, styles));
+    public void AddH5(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "h5", classes, styles));
 
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-
-    public void AddH2(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<h2></h2>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-
-    public void AddH3(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<h3></h3>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-    
-    public void AddH4(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<h4></h4>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-    
-    public void AddH5(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<h5></h5>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-    
     #endregion
-    
-    public void AddP(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<p></p>");
 
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-
-    public void AddI(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<i></i>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-
-    public void AddB(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<b></b>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
-
-    public void AddU(string text, string classes = "", params string[] styles)
-    {
-        var node = HtmlNode.CreateNode("<u></u>");
-
-        node.InnerHtml = text;
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
-
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
-    }
+    public void AddP(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "p", classes, styles));
+    public void AddI(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "i", classes, styles));
+    public void AddB(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "b", classes, styles));
+    public void AddU(string text, string classes = "", params string[] styles) => AppendNode(CreateNode(text, "u", classes, styles));
 
     public void AddLink(string text, string link, string classes = "", params string[] styles)
     {
-        var node = HtmlNode.CreateNode("<a></a>");
-
-        node.InnerHtml = text;
+        var node = CreateNode(text, "a", classes, styles);
+        
         node.Attributes.Add("href", link);
-        
-        classes.Split(' ').ToList().ForEach(x=>node.AddClass(x));
 
-        if (styles.Any())
-        {
-            var style = string.Empty;
-            styles.ToList().ForEach(x=>style += $"{x};");
-            node.Attributes.Add("style", style);   
-        }
-        
-        AddNode(node);
+        AppendNode(node);
     }
-    
-    public void AddNode(HtmlNode node)
+
+    public void AppendNode(HtmlNode node)
     {
         var body = HtmlDocument.DocumentNode.SelectSingleNode("//body");
 
         body?.AppendChild(node);
     }
     
-    public override string ToString() => HtmlDocument.DocumentNode.InnerHtml;
+    private static HtmlNode CreateNode(string text, string nodeText, string classes = "", params string[] styles)
+    {
+        var node = HtmlNode.CreateNode($"<{nodeText}></{nodeText}>");
+
+        node.InnerHtml = text;
+
+        classes.Split(' ').ToList().ForEach(x => node.AddClass(x));
+
+        if (!styles.Any()) return node;
+
+        var style = string.Empty;
+        styles.ToList().ForEach(x => style += $"{x};");
+        node.Attributes.Add("style", style);
+
+        return node;
+    }
 }
