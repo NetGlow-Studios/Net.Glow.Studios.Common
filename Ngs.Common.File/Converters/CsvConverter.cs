@@ -1,17 +1,20 @@
+using System.Collections;
+using System.Dynamic;
 using System.Globalization;
+using System.Reflection;
 using CsvHelper;
 using CsvHelper.Configuration;
 
 namespace Ngs.Common.File.Converters;
 
-public class CsvConverter
+public static class CsvConverter
 {
     /// <summary>
-    /// Serialize object to csv string
+    /// Serializes the specified object to a CSV string.
     /// </summary>
-    /// <param name="obj">Object to serializing</param>
-    /// <returns>Serialized CSV string.</returns>
-    public static string Serialize(object obj)
+    /// <param name="value">The object to serialize.</param>
+    /// <returns>A JSON string representation of the object.</returns>
+    public static string Serialize(object value)
     {
         using var writer = new StringWriter();
         
@@ -19,39 +22,82 @@ public class CsvConverter
         
         using (var csv = new CsvWriter(writer, csvConfig))
         {
-            csv.WriteRecord(obj);
+            if (value is IEnumerable v)
+            {
+                csv.WriteRecords(v);
+            }
+            else
+            {
+                csv.WriteRecord(value);
+            }
         }
 
         return writer.ToString();
     }
     
     /// <summary>
-    /// Deserialize CSV to object of T type
+    /// Deserializes the CSV to the specified .NET type.
     /// </summary>
-    /// <param name="csvString">Serialized CSV</param>
-    /// <typeparam name="T">Type</typeparam>
-    /// <returns>Deserialized CSV to object</returns>
-    public static T? Deserialize<T>(string csvString) where  T : class
+    /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
+    /// <param name="value">The JSON to deserialize.</param>
+    /// <returns>The deserialized object from the JSON string.</returns>
+    public static T? Deserialize<T>(string value)
     {
-        using var reader = new StringReader(csvString);
-        var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
-
-        using var csv = new CsvReader(reader, csvConfig);
-        return csv.GetRecords<T>().FirstOrDefault();
+        return (T?)Deserialize(value, typeof(T));
     }
 
     /// <summary>
-    /// Deserialize CSV to object of T type
+    /// Deserializes the CSV to the specified .NET type.
     /// </summary>
-    /// <param name="csvString">Serialized CSV</param>
-    /// <param name="type">Type</param>
-    /// <returns>Deserialized CSV to object</returns>
-    public static object? Deserialize(string csvString, Type type)
+    /// <param name="value">The JSON to deserialize.</param>
+    /// <param name="type">The <see cref="Type"/> of object being deserialized.</param>
+    /// <returns>The deserialized object from the JSON string.</returns>
+    public static object? Deserialize(string value, Type type)
     {
-        using var reader = new StringReader(csvString);
+        using var reader = new StringReader(value);
         var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
 
         using var csv = new CsvReader(reader, csvConfig);
-        return csv.GetRecords(type).FirstOrDefault();
+
+        if (!type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+        {
+            return csv.GetRecords(type).FirstOrDefault();
+        }
+        
+        var records = csv.GetRecords<object>().ToList();
+
+        if (!records.Any()) return default;
+            
+        var itemType = type.GetGenericArguments().First();
+        var listType = typeof(List<>).MakeGenericType(itemType);
+            
+        var resultList = Activator.CreateInstance(listType);
+
+        var properties = itemType.GetProperties();
+            
+        foreach (var record in records)
+        {
+            var item = Activator.CreateInstance(itemType);
+
+            var expando = ((ExpandoObject)record).ToList();
+                
+            foreach (var property in properties)
+            {
+                var propertyName = property.Name;
+                var propertyValue = expando.FirstOrDefault();
+                var itemProperty = itemType.GetProperty(propertyName);
+                
+                expando.Remove(propertyValue);
+                    
+                if (itemProperty != null)
+                {
+                    itemProperty.SetValue(item, Convert.ChangeType(propertyValue.Value?.ToString(), itemProperty.PropertyType));
+                }
+            }
+
+            listType.GetMethod("Add")?.Invoke(resultList, new[] { item });
+        }
+
+        return resultList!;
     }
 }

@@ -5,17 +5,6 @@ namespace Net.Glow.Studios.Core.Entities.Base;
 
 public abstract class BaseEntity
 {
-    protected BaseEntity()
-    {
-        CreatedAt = DateTime.UtcNow;
-        CreatedBy = null;
-
-        UpdatedAt = DateTime.UtcNow;
-        UpdatedBy = null;
-
-        Status = StatusEnum.Active;
-    }
-
     [Key] 
     public Guid Id { get; set; }
 
@@ -28,4 +17,15 @@ public abstract class BaseEntity
     public DateTime UpdatedAt { get; set; }
 
     public string? UpdatedBy { get; set; }
+    
+    protected BaseEntity()
+    {
+        CreatedAt = DateTime.UtcNow;
+        CreatedBy = null;
+
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = null;
+
+        Status = StatusEnum.Active;
+    }
 }
