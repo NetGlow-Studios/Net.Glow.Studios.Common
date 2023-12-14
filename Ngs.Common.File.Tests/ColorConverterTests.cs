@@ -1,3 +1,6 @@
+using Ngs.Common.Tools.Color;
+using Xunit;
+
 namespace Ngs.Common.File.Tests;
 
 public class ColorConverterTests

@@ -23,8 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ngs.Common.File\Ngs.Common.File.csproj" />
-      <ProjectReference Include="..\Ngs.Common.Tools.Color\Ngs.Common.Tools.Color.csproj" />
+      <ProjectReference Include="..\Ngs.Common.Tools.Conversion\Ngs.Common.Tools.Conversion.csproj" />
     </ItemGroup>
 
 </Project>

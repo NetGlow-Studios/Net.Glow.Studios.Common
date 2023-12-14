@@ -23,8 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ngs.Common.File\Ngs.Common.File.csproj" />
-      <ProjectReference Include="..\Ngs.Common.Tools.Color\Ngs.Common.Tools.Color.csproj" />
+      <ProjectReference Include="..\Ngs.Common.Mediator.Broker\Ngs.Common.Mediator.Broker.csproj" />
     </ItemGroup>
 
 </Project>

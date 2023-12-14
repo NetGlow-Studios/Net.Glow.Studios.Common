@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BarCode" Version="2023.12.4" />
+      <PackageReference Include="BouncyCastle" Version="1.8.9" />
+      <PackageReference Include="IronQR" Version="2023.12.1" />
+      <PackageReference Include="IronSoftware.System.Drawing" Version="2024.1.1" />
+      <PackageReference Include="QRCoder" Version="1.4.3" />
+      <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+    </ItemGroup>
+
+</Project>

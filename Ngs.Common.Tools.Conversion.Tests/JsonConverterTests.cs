@@ -1,4 +1,4 @@
-namespace Ngs.Common.File.Tests;
+namespace Ngs.Common.Tools.Conversion.Tests;
 
 public class JsonConverterTests
 {

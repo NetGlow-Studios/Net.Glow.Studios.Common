@@ -16,6 +16,7 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
       <PackageReference Include="OfficeOpenXml.Extends" Version="1.0.6" />
+      <PackageReference Include="SharpCompress" Version="0.34.2" />
     </ItemGroup>
 
 </Project>

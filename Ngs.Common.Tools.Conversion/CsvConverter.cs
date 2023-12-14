@@ -1,11 +1,11 @@
 using System.Collections;
+using System.Data;
 using System.Dynamic;
 using System.Globalization;
-using System.Reflection;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace Ngs.Common.File.Converters;
+namespace Ngs.Common.Tools.Conversion;
 
 public static class CsvConverter
 {
@@ -99,5 +99,29 @@ public static class CsvConverter
         }
 
         return resultList!;
+    }
+    
+    public static string ConvertFromJson<TSource>(string jsonString)
+    {
+        var source = JsonConverter.Deserialize<TSource>(jsonString);
+
+        if (source == null)
+        {
+            throw new NoNullAllowedException("Source can not be null!");
+        }
+        
+        return Serialize(source);
+    }
+    
+    public static string ConvertFromXml<TSource>(byte[] bytes)
+    {
+        var source = XmlConverter.Deserialize<TSource>(bytes);
+
+        if (source == null)
+        {
+            throw new NoNullAllowedException("Source can not be null!");
+        }
+        
+        return Serialize(source);
     }
 }

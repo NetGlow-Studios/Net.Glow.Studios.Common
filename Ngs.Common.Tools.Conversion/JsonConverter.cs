@@ -1,7 +1,8 @@
+using System.Data;
 using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace Ngs.Common.File.Converters;
+namespace Ngs.Common.Tools.Conversion;
 
 public class JsonConverter
 {
@@ -38,5 +39,29 @@ public class JsonConverter
     public static object? Deserialize(string value, Type type)
     {
         return JsonConvert.DeserializeObject(value, type);
+    }
+    
+    public static string ConvertFromCsv<TSource>(string csvString)
+    {
+        var source = CsvConverter.Deserialize<TSource>(csvString);
+
+        if (source == null)
+        {
+            throw new NoNullAllowedException("Source can not be null!");
+        }
+
+        return Serialize(source);
+    }
+    
+    public static string ConvertFromXml<TSource>(byte[] bytes)
+    {
+        var source = XmlConverter.Deserialize<TSource>(bytes);
+
+        if (source == null)
+        {
+            throw new NoNullAllowedException("Source can not be null!");
+        }
+        
+        return Serialize(source);
     }
 }

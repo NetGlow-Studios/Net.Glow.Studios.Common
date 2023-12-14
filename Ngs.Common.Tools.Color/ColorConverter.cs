@@ -1,6 +1,6 @@
-namespace Ngs.Common.File.Converters;
+namespace Ngs.Common.Tools.Color;
 
-public class ColorConverter
+public static class ColorConverter
 {
     public static string RgbToHex(int red, int green, int blue, int alpha = 255)
     {

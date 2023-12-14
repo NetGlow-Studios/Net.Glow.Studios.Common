@@ -1,8 +1,8 @@
 using ImageMagick;
 
-namespace Ngs.Common.File.Converters;
+namespace Ngs.Common.Tools.Image;
 
-public static class ImageConverter
+public class ImageConverter
 {
     private static byte[] Convert(Stream stream, MagickFormat imageOutFormat)
     {

@@ -1,6 +1,6 @@
 using ClosedXML.Excel;
 
-namespace Ngs.Common.File.Converters;
+namespace Ngs.Common.Tools.Conversion;
 
 public static class ExcelConverter
 {
