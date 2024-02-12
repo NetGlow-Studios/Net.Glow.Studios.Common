@@ -20,8 +20,8 @@ public class BaseRepositoryAsync<T> : IBaseRepositoryAsync<T>, IBaseRepositoryRe
 
     public async Task<Guid?> CreateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        entity.Id = Guid.NewGuid();
-        entity.Status = StatusEnum.Active;
+        entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
+        entity.Status = entity.Status == default ? StatusEnum.Active : entity.Status;
         entity.CreatedAt = DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
 
@@ -228,7 +228,7 @@ public class BaseRepositoryAsync<T> : IBaseRepositoryAsync<T>, IBaseRepositoryRe
                 _dbSet, (current, includeProperty) =>
                     current.Include(includeProperty!));
 
-        return await query.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return await query.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
