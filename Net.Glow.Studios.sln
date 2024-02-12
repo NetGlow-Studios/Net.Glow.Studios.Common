@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Glow.Studios.Core", "Net.Glow.Studios.Core\Net.Glow.Studios.Core.csproj", "{13923F10-F4B1-43FE-B1EC-2CFA052AF198}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Glow.Studios.Domain", "Net.Glow.Studios.Domain\Net.Glow.Studios.Domain.csproj", "{13923F10-F4B1-43FE-B1EC-2CFA052AF198}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Glow.Studios.Database", "Net.Glow.Studios.Database\Net.Glow.Studios.Database.csproj", "{2AD46FC7-2C3B-4451-965A-91F3C1092ED1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Glow.Studios.Infrastructure", "Net.Glow.Studios.Infrastructure\Net.Glow.Studios.Infrastructure.csproj", "{2AD46FC7-2C3B-4451-965A-91F3C1092ED1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C0CF9971-21FA-47D4-A3D5-876026692AC6}"
 EndProject
@@ -53,6 +53,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngs.Common.Tools.Network.Tests", "Ngs.Common.Tools.Network.Tests\Ngs.Common.Tools.Network.Tests.csproj", "{147974CB-AC39-4A07-BD99-388906F7E8DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngs.Common.Tools.Web.Tests", "Ngs.Common.Tools.Web.Tests\Ngs.Common.Tools.Web.Tests.csproj", "{0A125BC4-45EB-4CC3-8077-4EDFD41FDD0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngs.Common.Tools.AspNetCore", "Ngs.Common.Tools.AspNetCore\Ngs.Common.Tools.AspNetCore.csproj", "{630037F5-919F-44E9-8F32-41BBF1CB52F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -148,6 +150,10 @@ Global
 		{0A125BC4-45EB-4CC3-8077-4EDFD41FDD0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A125BC4-45EB-4CC3-8077-4EDFD41FDD0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A125BC4-45EB-4CC3-8077-4EDFD41FDD0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{630037F5-919F-44E9-8F32-41BBF1CB52F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{630037F5-919F-44E9-8F32-41BBF1CB52F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{630037F5-919F-44E9-8F32-41BBF1CB52F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{630037F5-919F-44E9-8F32-41BBF1CB52F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{56E07290-2DA8-42A7-B840-F2019402430C} = {9A09B723-EC1E-4A61-9D6F-B46040FA6129}
@@ -173,5 +179,6 @@ Global
 		{A293D84C-7A57-4E8E-91E5-7CDDF4F57FF9} = {6E9A4879-3203-4947-9E5A-C9DD4232721B}
 		{147974CB-AC39-4A07-BD99-388906F7E8DD} = {B8CED6A9-E33D-41C5-9AD5-0A1B4EBB8BCD}
 		{0A125BC4-45EB-4CC3-8077-4EDFD41FDD0F} = {B8CED6A9-E33D-41C5-9AD5-0A1B4EBB8BCD}
+		{630037F5-919F-44E9-8F32-41BBF1CB52F5} = {39E80D76-DCFC-4F10-8B17-EE8E2EF9135B}
 	EndGlobalSection
 EndGlobal

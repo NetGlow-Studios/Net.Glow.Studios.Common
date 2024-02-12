@@ -36,7 +36,7 @@ public class MailServiceTest
         mailBuilder.AddBody(body);
 
         //Configure server credetials
-        var mailService = new MailService(new MailConfiguration
+        var mailService = new SmtpService(new SmtpConfiguration
         {
             Host = "smtp.gmail.com",
             Port = 587,

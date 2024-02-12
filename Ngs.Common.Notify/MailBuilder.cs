@@ -58,9 +58,9 @@ public class MailBuilder
     public IReadOnlyCollection<string> GetCc() => Cc.ToList();
     public IReadOnlyCollection<Attachment> GetAttachments() => Attachments.ToList();
 
-    public Mail Build()
+    public MailModel Build()
     {
-        return new Mail
+        return new MailModel
         {
             Subject = Subject,
             Content = MailBodyBuilder.ToString(),
