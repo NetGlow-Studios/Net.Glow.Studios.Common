@@ -4,22 +4,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace Ngs.Common.Tools.AspNetCore.Mvc;
+namespace Ngs.Common.Tools.AspNetCore.Extensions;
 
-public static class ViewToStringRenderer
+public static class ControllerExtensions
 {
-    public static string RenderPartialToString(Controller controller, string partialViewName, object model)
+    public static string RenderViewToString(this Controller controller, string viewName, object? model)
     {
         var httpContext = controller.ControllerContext.HttpContext;
         var actionContext = new ActionContext(httpContext, controller.RouteData, controller.ControllerContext.ActionDescriptor);
 
         var viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
 
-        var viewResult = viewEngine!.GetView("", partialViewName, false);
+        var viewResult = viewEngine!.GetView("", viewName, false);
 
         if (viewResult.View == null)
         {
-            throw new ArgumentNullException($"{partialViewName} not found");
+            throw new ArgumentNullException($"{viewName} not found");
         }
 
         var viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
