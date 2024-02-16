@@ -1,7 +1,0 @@
-﻿Add migrations:
-dotnet ef migrations add Init --project .\Net.Glow.Studios.Database.csproj -s ..\Net.Glow.Studios.Web\Net.Glow.Studios.Web.csproj
-dotnet ef migrations add Init --project .\Net.Glow.Studios.Database.csproj -s ..\Net.Glow.Studios.API\Net.Glow.Studios.API.csproj
-
-Update database:
-dotnet ef database update --project .\Net.Glow.Studios.Database.csproj -s ..\Net.Glow.Studios.Web\Net.Glow.Studios.Web.csproj
-dotnet ef database update --project .\Net.Glow.Studios.Database.csproj -s ..\Net.Glow.Studios.API\Net.Glow.Studios.API.csproj

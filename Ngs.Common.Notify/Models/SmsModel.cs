@@ -1,4 +1,4 @@
-namespace Net.Glow.Studios.Common.Notify.Models;
+namespace Ngs.Common.Notify.Models;
 
 public class SmsModel(string message, ICollection<string> to)
 {

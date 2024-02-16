@@ -7,6 +7,9 @@ using CsvHelper.Configuration;
 
 namespace Ngs.Common.Tools.Conversion;
 
+/// <summary>
+/// Provides methods for converting CSV data to and from .NET objects.
+/// </summary>
 public static class CsvConverter
 {
     /// <summary>
@@ -66,7 +69,7 @@ public static class CsvConverter
         
         var records = csv.GetRecords<object>().ToList();
 
-        if (!records.Any()) return default;
+        if (records.Count == 0) return default;
             
         var itemType = type.GetGenericArguments().First();
         var listType = typeof(List<>).MakeGenericType(itemType);

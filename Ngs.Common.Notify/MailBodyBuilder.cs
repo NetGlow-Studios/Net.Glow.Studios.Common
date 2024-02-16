@@ -1,6 +1,6 @@
 using HtmlAgilityPack;
 
-namespace Net.Glow.Studios.Common.Notify;
+namespace Ngs.Common.Notify;
 
 public class MailBodyBuilder
 {

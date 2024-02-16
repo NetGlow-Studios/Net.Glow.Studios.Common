@@ -1,6 +1,6 @@
 using System.Net.Mail;
 
-namespace Net.Glow.Studios.Common.Notify.Models;
+namespace Ngs.Common.Notify.Models;
 
 public sealed class MailModel
 {

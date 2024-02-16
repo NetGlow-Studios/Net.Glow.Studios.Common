@@ -4,6 +4,10 @@ namespace Ngs.Common.Tools.Network;
 
 public static class IpAddress
 {
+    /// <summary>
+    /// Get the local IP address of the machine.
+    /// </summary>
+    /// <returns></returns>
     public static string GetMyIp()
     {
         var hostName = Dns.GetHostName();
@@ -20,6 +24,10 @@ public static class IpAddress
         return string.Empty;
     }
 
+    /// <summary>
+    /// Get the public IP address of the machine.
+    /// </summary>
+    /// <returns></returns>
     public static string GetMyPublicIp()
     {
         var externalIpString = new HttpClient().GetStringAsync("https://icanhazip.com").Result;

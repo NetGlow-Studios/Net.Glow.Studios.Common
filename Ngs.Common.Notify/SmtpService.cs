@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Mail;
-using Net.Glow.Studios.Common.Notify.Exceptions;
-using Net.Glow.Studios.Common.Notify.Models;
+using Ngs.Common.Notify.Exceptions;
+using Ngs.Common.Notify.Models;
 
-namespace Net.Glow.Studios.Common.Notify;
+namespace Ngs.Common.Notify;
 
 public class SmtpService
 {

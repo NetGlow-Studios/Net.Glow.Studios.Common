@@ -4,7 +4,10 @@ using Newtonsoft.Json;
 
 namespace Ngs.Common.Tools.Conversion;
 
-public class JsonConverter
+/// <summary>
+/// Provides methods for converting between .NET types and JSON strings.
+/// </summary>
+public static class JsonConverter
 {
     /// <summary>
     /// Serializes the specified object to a JSON string.
@@ -41,6 +44,13 @@ public class JsonConverter
         return JsonConvert.DeserializeObject(value, type);
     }
     
+    /// <summary>
+    /// Converts the specified JSON string to the specified .NET type.
+    /// </summary>
+    /// <param name="csvString"> The JSON string to convert. </param>
+    /// <typeparam name="TSource"> The type of the object to convert to. </typeparam>
+    /// <returns> The converted object from the JSON string. </returns>
+    /// <exception cref="NoNullAllowedException"> Source can not be null! </exception>
     public static string ConvertFromCsv<TSource>(string csvString)
     {
         var source = CsvConverter.Deserialize<TSource>(csvString);
@@ -53,6 +63,13 @@ public class JsonConverter
         return Serialize(source);
     }
     
+    /// <summary>
+    /// Converts the specified JSON string to the specified .NET type.
+    /// </summary>
+    /// <param name="bytes"> The JSON string to convert. </param>
+    /// <typeparam name="TSource"> The type of the object to convert to. </typeparam>
+    /// <returns> The converted object from the JSON string. </returns>
+    /// <exception cref="NoNullAllowedException"> Source can not be null! </exception>
     public static string ConvertFromXml<TSource>(byte[] bytes)
     {
         var source = XmlConverter.Deserialize<TSource>(bytes);

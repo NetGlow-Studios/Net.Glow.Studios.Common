@@ -2,8 +2,18 @@ using ClosedXML.Excel;
 
 namespace Ngs.Common.Tools.Conversion;
 
+/// <summary>
+/// Provides methods for converting Excel data to and from .NET objects.
+/// </summary>
 public static class ExcelConverter
 {
+    /// <summary>
+    /// Converts the specified Excel file to a collection of .NET objects.
+    /// </summary>
+    /// <param name="bytes"> The Excel file to convert. </param>
+    /// <param name="hasHeaders"> Whether the Excel file has headers. </param>
+    /// <typeparam name="T"> The type of the object to convert to. </typeparam>
+    /// <returns> A collection of .NET objects. </returns>
     public static IEnumerable<T> ConvertToObject<T>(byte[] bytes, bool hasHeaders)
     {
         using var memoryStream = new MemoryStream(bytes);
@@ -35,6 +45,14 @@ public static class ExcelConverter
         return objects.ToArray();
     }
     
+    /// <summary>
+    /// Converts the specified collection of .NET objects to an Excel file.
+    /// </summary>
+    /// <param name="data"> The collection of .NET objects to convert. </param>
+    /// <param name="hasHeader"> Whether the Excel file has headers. </param>
+    /// <param name="sheetName"> The name of the sheet. </param>
+    /// <typeparam name="T"> The type of the object to convert from. </typeparam>
+    /// <returns> The Excel file. </returns>
     public static IEnumerable<byte> ConvertToExcelFile<T>(IReadOnlyList<T> data, bool hasHeader, string sheetName = "")
     {
         using var workbook = new XLWorkbook();

@@ -17,8 +17,8 @@ public static class BuilderExtensions
     /// <returns></returns>
     public static IServiceCollection AddUserPrivilegeAuth<TIPrivilege>(this IServiceCollection services) where TIPrivilege : class, IPrivilege
     {
-        services.AddScoped<HasPrivilegeFilter<TIPrivilege>>(x =>
-            new HasPrivilegeFilter<TIPrivilege>(x.GetRequiredService<TIPrivilege>(), default!, default!, default!, default!));
+        services.AddScoped<AccessControlFilter<TIPrivilege>>(x =>
+            new AccessControlFilter<TIPrivilege>(x.GetRequiredService<TIPrivilege>(), default!, default!, default!, default!));
 
         return services;
     }

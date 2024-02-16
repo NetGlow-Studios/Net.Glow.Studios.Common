@@ -1,6 +1,8 @@
-namespace Net.Glow.Studios.Common.Notify.Exceptions;
+using Ngs.Common.AspNetCore.Exceptions.Base;
 
-public class NotifySmtpReceiverException : Exception
+namespace Ngs.Common.Notify.Exceptions;
+
+public class NotifySmtpReceiverException : BaseException
 {
     public NotifySmtpReceiverException()
     {

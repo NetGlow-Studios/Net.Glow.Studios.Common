@@ -1,5 +1,4 @@
-using Net.Glow.Studios.Common.Notify;
-using Net.Glow.Studios.Common.Notify.Models;
+using Ngs.Common.Notify.Models;
 
 namespace Ngs.Common.Notify.Tests;
 

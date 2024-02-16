@@ -4,6 +4,12 @@ namespace Ngs.Common.Tools.Image;
 
 public class ImageConverter
 {
+    /// <summary>
+    /// Converts the image to the specified format.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="imageOutFormat"></param>
+    /// <returns></returns>
     private static byte[] Convert(Stream stream, MagickFormat imageOutFormat)
     {
         using var memStream = new MemoryStream();
@@ -15,6 +21,12 @@ public class ImageConverter
         return memStream.ToArray();
     }
 
+    /// <summary>
+    /// Converts the image to the specified format.
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <param name="imageOutFormat"></param>
+    /// <returns></returns>
     private static byte[] Convert(byte[] bytes, MagickFormat imageOutFormat)
     {
         using var memStream = new MemoryStream();
@@ -26,6 +38,12 @@ public class ImageConverter
         return memStream.ToArray();
     }
 
+    /// <summary>
+    /// Converts the image to the specified format asynchronously.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="imageOutFormat"></param>
+    /// <returns></returns>
     private static async Task<byte[]> ConvertAsync(Stream stream, MagickFormat imageOutFormat)
     {
         using var memStream = new MemoryStream();
@@ -37,6 +55,12 @@ public class ImageConverter
         return memStream.ToArray();
     }
 
+    /// <summary>
+    /// Converts the image to the specified format asynchronously.
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <param name="imageOutFormat"></param>
+    /// <returns></returns>
     private static async Task<byte[]> ConvertAsync(byte[] bytes, MagickFormat imageOutFormat)
     {
         using var memStream = new MemoryStream();

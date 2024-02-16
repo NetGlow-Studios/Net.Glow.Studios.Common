@@ -1,6 +1,6 @@
-namespace Net.Glow.Studios.Common.Notify.Models;
+namespace Ngs.Common.Notify.Models;
 
-public sealed class SmsConfiguration
+public class SmsConfiguration
 {
     public string AuthorisationToken { get; }
     

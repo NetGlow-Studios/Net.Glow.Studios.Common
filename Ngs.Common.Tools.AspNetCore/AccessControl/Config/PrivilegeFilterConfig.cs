@@ -20,7 +20,7 @@ public class PrivilegeFilterConfig
     /// <param name="result"></param>
     /// <param name="actionResult"></param>
     /// <typeparam name="TEnum"></typeparam>
-    public void AddConfiguration<TEnum>(RoleDeclinedPrivilegeResultEnum result, ActionResult actionResult) where TEnum : Enum
+    public void AddConfiguration<TEnum>(PrivilegeIfDeclined result, ActionResult actionResult) where TEnum : Enum
     {
         Privileges.Add(new PrivilegeConfigModel(typeof(TEnum), result, actionResult));
     }
@@ -31,7 +31,7 @@ public class PrivilegeFilterConfig
     /// <param name="type"></param>
     /// <param name="result"></param>
     /// <param name="data"></param>
-    public void AddConfiguration(Type type, RoleDeclinedPrivilegeResultEnum result, object data)
+    public void AddConfiguration(Type type, PrivilegeIfDeclined result, object data)
     {
         Privileges.Add(new PrivilegeConfigModel(type, result, data));
     }

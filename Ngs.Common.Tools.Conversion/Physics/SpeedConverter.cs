@@ -2,11 +2,21 @@ namespace Ngs.Common.Tools.Conversion.Physics;
 
 public class SpeedConverter
 {
+    /// <summary>
+    /// Converts kilometers per hour to miles per hour.
+    /// </summary>
+    /// <param name="kmph"> Kilometers per hour. </param>
+    /// <returns> Meters per second. </returns>
     public static double KilometersPerHourToMilesPerHour(double kmph)
     {
         return kmph / 1.60934; // 1 mile = 1.60934 kilometers
     }
 
+    /// <summary>
+    ///  Converts miles per hour to kilometers per hour.
+    /// </summary>
+    /// <param name="mph"></param>
+    /// <returns></returns>
     public static double MilesPerHourToKilometersPerHour(double mph)
     {
         return mph * 1.60934; // 1 mile = 1.60934 kilometers

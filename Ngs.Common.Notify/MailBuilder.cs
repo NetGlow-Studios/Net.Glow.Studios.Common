@@ -1,8 +1,8 @@
 using System.Net.Mail;
 using System.Net.Mime;
-using Net.Glow.Studios.Common.Notify.Models;
+using Ngs.Common.Notify.Models;
 
-namespace Net.Glow.Studios.Common.Notify;
+namespace Ngs.Common.Notify;
 
 public class MailBuilder
 {

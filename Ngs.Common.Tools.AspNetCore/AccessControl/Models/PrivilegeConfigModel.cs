@@ -20,9 +20,9 @@ public class PrivilegeConfigModel
     /// <summary>
     /// Result of the declined privilege.
     /// </summary>
-    public RoleDeclinedPrivilegeResultEnum Result { get; set; }
+    public PrivilegeIfDeclined Result { get; set; }
 
-    public PrivilegeConfigModel(Type privilege, RoleDeclinedPrivilegeResultEnum result, object data)
+    public PrivilegeConfigModel(Type privilege, PrivilegeIfDeclined result, object data)
     {
         Privilege = privilege;
         Data = data;

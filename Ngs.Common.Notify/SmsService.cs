@@ -1,7 +1,7 @@
-using Net.Glow.Studios.Common.Notify.Models;
+using Ngs.Common.Notify.Models;
 using RestSharp;
 
-namespace Net.Glow.Studios.Common.Notify;
+namespace Ngs.Common.Notify;
 
 public class SmsService(SmsConfiguration configuration)
 {

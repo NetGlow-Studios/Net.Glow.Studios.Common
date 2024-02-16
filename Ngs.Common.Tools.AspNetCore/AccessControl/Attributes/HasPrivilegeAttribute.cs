@@ -9,5 +9,5 @@ namespace Ngs.Common.Tools.AspNetCore.AccessControl.Attributes
     /// </summary>
     /// <typeparam name="TIPrivilege">Service with database instance to return condition if user has privilege.</typeparam>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public abstract class HasPrivilegeAttribute<TIPrivilege>() : TypeFilterAttribute(typeof(HasPrivilegeFilter<TIPrivilege>)) where TIPrivilege : IPrivilege;
+    public abstract class HasPrivilegeAttribute<TIPrivilege>() : TypeFilterAttribute(typeof(AccessControlFilter<TIPrivilege>)) where TIPrivilege : IPrivilege;
 }
