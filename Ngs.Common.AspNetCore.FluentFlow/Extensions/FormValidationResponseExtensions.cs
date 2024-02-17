@@ -1,31 +1,30 @@
-using Ngs.Common.AspNetCore.FluentFlow.Models;
+using Ngs.Common.AspNetCore.FluentFlow.Resp;
 
 namespace Ngs.Common.AspNetCore.FluentFlow.Extensions
 {
     /// <summary>
-    /// Extension methods for <see cref="FormValidationResponse"/>.
+    /// Extension methods for <see cref="FormValidationFluentResponse"/>.
     /// </summary>
     public static class FormValidationResponseExtensions
     {
         /// <summary>
-        /// Checks if the response is successful to create a scenario where the response is successful.
+        /// Checks if the fluentFluentResponse is successful to create a scenario where the fluentFluentResponse is successful.
         /// </summary>
-        /// <param name="response"></param>
+        /// <param name="fluentResponse"></param>
         /// <returns></returns>
-        public static FormValidationResponse IsSucceeded(this FormValidationResponse response)
+        public static FormValidationFluentResponse IsSucceeded(this FormValidationFluentResponse fluentResponse)
         {
-            return !response.IsSuccess ? new FormValidationResponse() : response;
+            return !fluentResponse.IsSuccess ? new FormValidationFluentResponse() : fluentResponse;
         }
         
         /// <summary>
-        /// Checks if the response is not successful to create a scenario where the response is not successful.
+        /// Checks if the fluentFluentResponse is not successful to create a scenario where the fluentFluentResponse is not successful.
         /// </summary>
-        /// <param name="response"></param>
+        /// <param name="fluentResponse"></param>
         /// <returns></returns>
-        public static FormValidationResponse IsNotSucceeded(this FormValidationResponse response)
+        public static FormValidationFluentResponse IsNotSucceeded(this FormValidationFluentResponse fluentResponse)
         {
-            return response.IsSuccess ? new FormValidationResponse() : response;
-
+            return fluentResponse.IsSuccess ? new FormValidationFluentResponse() : fluentResponse;
         }
     }
 }

@@ -1,19 +1,18 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Ngs.Common.AspNetCore.FluentFlow.Enums;
 
-namespace Ngs.Common.AspNetCore.FluentFlow;
+namespace Ngs.Common.AspNetCore.FluentFlow.Resp;
 
-public class Response
+public class FluentResponse
 {
     /// <summary>
-    /// Content of the response. Contains the data that will be returned to the client.
+    /// Content of the fluentResponse. Contains the data that will be returned to the client.
     /// </summary>
     public object? Content { get; set; }
     
     /// <summary>
-    /// Status code of the response.
+    /// Status code of the fluentResponse.
     /// </summary>
     public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
     
@@ -22,10 +21,11 @@ public class Response
     /// </summary>
     public ResponseActionEnum RequiredAction { get; set; }
 
+    
     /// <summary>
-    /// Returns an ActionResult that can be returned to the client.
+    /// Returns an ActionResult based on the fluentResponse.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> ActionResult </returns>
     public virtual ActionResult GetActionResult()
     {
         var result = new JsonResult(new

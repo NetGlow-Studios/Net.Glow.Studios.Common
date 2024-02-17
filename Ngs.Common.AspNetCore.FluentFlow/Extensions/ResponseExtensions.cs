@@ -1,113 +1,113 @@
 using Microsoft.AspNetCore.Mvc;
 using Ngs.Common.AspNetCore.FluentFlow.Enums;
-using Ngs.Common.AspNetCore.FluentFlow.Models;
+using Ngs.Common.AspNetCore.FluentFlow.Resp;
 using Ngs.Common.AspNetCore.Tools.Extensions;
 
 namespace Ngs.Common.AspNetCore.FluentFlow.Extensions;
 
 /// <summary>
-/// Extension methods for <see cref="Response"/>.
+/// Extension methods for <see cref="FluentResponse"/>.
 /// </summary>
 public static class ResponseExtensions
 {
     /// <summary>
-    /// Returns a response with a modal for bootstrap 5.
+    /// Returns a fluentFluentResponse with a modal for bootstrap 5.
     /// </summary>
-    /// <param name="response"> The response. </param>
+    /// <param name="fluentResponse"> The fluentFluentResponse. </param>
     /// <param name="controller"> The controller. </param>
     /// <param name="viewName"> The view name. </param>
     /// <param name="model"> The model. </param>
-    /// <returns> The <see cref="Response"/>. </returns>
-    public static Response ReturnModal(this Response response, Controller controller, string viewName,
+    /// <returns> The <see cref="FluentResponse"/>. </returns>
+    public static FluentResponse ReturnModal(this FluentResponse fluentResponse, Controller controller, string viewName,
         object? model = null)
     {
-        response.RequiredAction = ResponseActionEnum.Modal;
-        response.Content = controller.RenderViewToString(viewName, model);
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.Modal;
+        fluentResponse.Content = controller.RenderViewToString(viewName, model);
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with a partial view.
+    /// Returns a fluentFluentResponse with a partial view.
     /// </summary>
-    /// <param name="response"> The response. </param>
+    /// <param name="fluentResponse"> The fluentFluentResponse. </param>
     /// <param name="controller"> The controller. </param>
     /// <param name="partialView"> The partial view. </param>
-    /// <returns> The <see cref="Response"/>. </returns>
-    public static Response ReturnPartialView(this Response response, Controller controller,
+    /// <returns> The <see cref="FluentResponse"/>. </returns>
+    public static FluentResponse ReturnPartialView(this FluentResponse fluentResponse, Controller controller,
         PartialViewResult partialView)
     {
-        response.RequiredAction = ResponseActionEnum.None;
-        response.Content = controller.RenderViewToString(partialView.ViewName!, partialView.Model);
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.None;
+        fluentResponse.Content = controller.RenderViewToString(partialView.ViewName!, partialView.Model);
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with redirect to action.
+    /// Returns a fluentFluentResponse with redirect to action.
     /// </summary>
-    /// <param name="response"></param>
+    /// <param name="fluentResponse"></param>
     /// <param name="localUrl"></param>
     /// <returns></returns>
-    public static Response RedirectToAction(this Response response, string? localUrl)
+    public static FluentResponse RedirectToAction(this FluentResponse fluentResponse, string? localUrl)
     {
-        response.RequiredAction = ResponseActionEnum.RedirectToAction;
-        response.Content = localUrl;
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.RedirectToAction;
+        fluentResponse.Content = localUrl;
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with redirect to url.
+    /// Returns a fluentFluentResponse with redirect to url.
     /// </summary>
-    /// <param name="response"></param>
+    /// <param name="fluentResponse"></param>
     /// <param name="url"></param>
     /// <returns></returns>
-    public static Response Redirect(this Response response, string url)
+    public static FluentResponse Redirect(this FluentResponse fluentResponse, string url)
     {
-        response.RequiredAction = ResponseActionEnum.Redirect;
-        response.Content = url;
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.Redirect;
+        fluentResponse.Content = url;
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with refresh action state.
+    /// Returns a fluentFluentResponse with refresh action state.
     /// </summary>
-    /// <param name="response"></param>
+    /// <param name="fluentResponse"></param>
     /// <returns></returns>
-    public static Response Refresh(this Response response)
+    public static FluentResponse Refresh(this FluentResponse fluentResponse)
     {
-        response.RequiredAction = ResponseActionEnum.Refresh;
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.Refresh;
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with close action state.
+    /// Returns a fluentFluentResponse with close action state.
     /// </summary>
-    /// <param name="response"></param>
+    /// <param name="fluentResponse"></param>
     /// <returns></returns>
-    public static Response Close(this Response response)
+    public static FluentResponse Close(this FluentResponse fluentResponse)
     {
-        response.RequiredAction = ResponseActionEnum.Close;
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.Close;
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with handle error action state.
+    /// Returns a fluentFluentResponse with handle error action state.
     /// </summary>
-    /// <param name="response"></param>
+    /// <param name="fluentResponse"></param>
     /// <returns></returns>
-    public static Response HandleError(this Response response)
+    public static FluentResponse HandleErrors(this FluentResponse fluentResponse)
     {
-        response.RequiredAction = ResponseActionEnum.HandleError;
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.HandleError;
+        return fluentResponse;
     }
 
     /// <summary>
-    /// Returns a response with none action state.
+    /// Returns a fluentFluentResponse with none action state.
     /// </summary>
-    /// <param name="response"></param>
+    /// <param name="fluentResponse"></param>
     /// <returns></returns>
-    public static FormValidationResponse None(this FormValidationResponse response)
+    public static FormValidationFluentResponse NoAction(this FormValidationFluentResponse fluentResponse)
     {
-        response.RequiredAction = ResponseActionEnum.None;
-        return response;
+        fluentResponse.RequiredAction = ResponseActionEnum.None;
+        return fluentResponse;
     }
 }
