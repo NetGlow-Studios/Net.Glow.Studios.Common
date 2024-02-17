@@ -60,6 +60,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngs.Common.AspNetCore.Tools
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngs.Common.AspNetCore.AccessControl", "Ngs.Common.AspNetCore.AccessControl\Ngs.Common.AspNetCore.AccessControl.csproj", "{DD39B324-0095-48F8-94A8-6CF030512FDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngs.Common.AspNetCore.FluentFlow", "Ngs.Common.AspNetCore.FluentFlow\Ngs.Common.AspNetCore.FluentFlow.csproj", "{68048A18-1911-45BC-9B54-E13D6B204B88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,6 +168,10 @@ Global
 		{DD39B324-0095-48F8-94A8-6CF030512FDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD39B324-0095-48F8-94A8-6CF030512FDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD39B324-0095-48F8-94A8-6CF030512FDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68048A18-1911-45BC-9B54-E13D6B204B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68048A18-1911-45BC-9B54-E13D6B204B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68048A18-1911-45BC-9B54-E13D6B204B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68048A18-1911-45BC-9B54-E13D6B204B88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{56E07290-2DA8-42A7-B840-F2019402430C} = {9A09B723-EC1E-4A61-9D6F-B46040FA6129}

@@ -12,8 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Net Glow Studios\Ngs.Common.AspNetCore.Tools\Ngs.Common.AspNetCore.Tools.csproj" />
-      <ProjectReference Include="..\Net Glow Studios\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
       <ProjectReference Include="..\Ngs.Common.AspNetCore.Tools\Ngs.Common.AspNetCore.Tools.csproj" />
       <ProjectReference Include="..\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
     </ItemGroup>
