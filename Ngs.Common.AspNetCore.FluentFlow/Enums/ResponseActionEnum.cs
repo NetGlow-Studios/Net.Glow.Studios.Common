@@ -38,5 +38,10 @@ public enum ResponseActionEnum
     /// <summary>
     /// Handle the errors.
     /// </summary>
-    HandleError = 6
+    HandleError = 6,
+    
+    /// <summary>
+    /// Download a file. Should be used only for web applications.
+    /// </summary>
+    DownloadFile = 7,
 }
