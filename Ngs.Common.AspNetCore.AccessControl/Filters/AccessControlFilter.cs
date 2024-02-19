@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Ngs.Common.AspNetCore.AccessControl.Config;
 using Ngs.Common.AspNetCore.AccessControl.Enums;
 using Ngs.Common.AspNetCore.AccessControl.Interfaces;
+using Ngs.Common.AspNetCore.FluentFlow.Extensions;
+using Ngs.Common.AspNetCore.FluentFlow.Resp;
 using Ngs.Common.AspNetCore.Tools.Extensions;
 
 namespace Ngs.Common.AspNetCore.AccessControl.Filters;
@@ -30,24 +32,27 @@ public class AccessControlFilter<TIPrivilege> : IAsyncActionFilter where TIPrivi
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if(await _privilegeService.HasPrivilegeAsync(context.HttpContext.User, _privileges, _includeIsAdmin)) await next();
+        if (await _privilegeService.HasPrivilegeAsync(context.HttpContext.User, _privileges, _includeIsAdmin))
+        {
+            await next();
+            return;
+        }
+
+        var data = _config.Privileges.FirstOrDefault(x
+                => x.Privilege == _privileges.GetType() && x.Result == _result)?.Data;
 
         switch (_result)
         {
             case PrivilegeIfDeclined.RedirectToAction:
-                context.Result = (ActionResult?)_config.Privileges.FirstOrDefault(x => x.Privilege == _privileges.GetType() && x.Result == _result)?.Data;
+                context.Result = (ActionResult?)data;
                 break;
             case PrivilegeIfDeclined.ReturnJsonResponse:
-                context.Result = (ActionResult?)_config.Privileges.FirstOrDefault(x => x.Privilege == _privileges.GetType() && x.Result == _result)?.Data;
+                context.Result = (ActionResult?)data;
                 break;
             case PrivilegeIfDeclined.ModalUnauthorized:
-                var modal = (context.Controller as Controller)?.RenderViewToString((string)_config.Privileges.FirstOrDefault(x => x.Privilege == _privileges.GetType() && x.Result == _result)!.Data, null);
-                context.Result = new ContentResult
-                {
-                    Content = modal,
-                    ContentType = "text/html",
-                    StatusCode = 200
-                };
+                var response = new FluentResponse();
+                response.ReturnModal((context.Controller as Controller)!, (string)data!);
+                context.Result = response.GetActionResult();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Ngs.Common.AspNetCore.FluentFlow\Ngs.Common.AspNetCore.FluentFlow.csproj" />
       <ProjectReference Include="..\Ngs.Common.AspNetCore.Tools\Ngs.Common.AspNetCore.Tools.csproj" />
       <ProjectReference Include="..\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
     </ItemGroup>

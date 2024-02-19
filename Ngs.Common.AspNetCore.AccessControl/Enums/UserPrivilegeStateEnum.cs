@@ -6,11 +6,6 @@ namespace Ngs.Common.AspNetCore.AccessControl.Enums;
 public enum UserPrivilegeStateEnum
 {
     /// <summary>
-    /// Declined privilege.
-    /// </summary>
-    Declined = -1,
-    
-    /// <summary>
     /// None privilege.
     /// </summary>
     None = 0,
@@ -18,5 +13,10 @@ public enum UserPrivilegeStateEnum
     /// <summary>
     /// Granted privilege.
     /// </summary>
-    Granted = 1
+    Granted = 1,
+    
+    /// <summary>
+    /// Declined privilege.
+    /// </summary>
+    Declined = 2
 }

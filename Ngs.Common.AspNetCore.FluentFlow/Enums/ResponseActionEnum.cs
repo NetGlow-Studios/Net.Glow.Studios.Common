@@ -44,4 +44,9 @@ public enum ResponseActionEnum
     /// Download a file. Should be used only for web applications.
     /// </summary>
     DownloadFile = 7,
+    
+    /// <summary>
+    /// Show an internal error message.
+    /// </summary>
+    InternalError = 8
 }

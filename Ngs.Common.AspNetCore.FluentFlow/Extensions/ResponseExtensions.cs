@@ -47,23 +47,32 @@ public static class ResponseExtensions
     /// <param name="fluentResponse"></param>
     /// <param name="localUrl"></param>
     /// <returns></returns>
-    public static FluentResponse RedirectToAction(this FluentResponse fluentResponse, string? localUrl)
+    public static FluentResponse RedirectToAction(this FluentResponse fluentResponse, string? localUrl, string target = "_self")
     {
         fluentResponse.RequiredAction = ResponseActionEnum.RedirectToAction;
-        fluentResponse.Content = localUrl;
+        fluentResponse.Content = new
+        {
+            url = localUrl,
+            target
+        };
         return fluentResponse;
     }
 
     /// <summary>
     /// Returns a fluentFluentResponse with redirect to url.
     /// </summary>
-    /// <param name="fluentResponse"></param>
-    /// <param name="url"></param>
-    /// <returns></returns>
-    public static FluentResponse Redirect(this FluentResponse fluentResponse, string url)
+    /// <param name="fluentResponse"> The fluentFluentResponse. </param>
+    /// <param name="url"> The url. </param>
+    /// <param name="target"> The target. </param>
+    /// <returns> The <see cref="FluentResponse"/>. </returns>
+    public static FluentResponse Redirect(this FluentResponse fluentResponse, string url, string target = "_self")
     {
         fluentResponse.RequiredAction = ResponseActionEnum.Redirect;
-        fluentResponse.Content = url;
+        fluentResponse.Content = new
+        {
+            url = url,
+            target
+        };
         return fluentResponse;
     }
 

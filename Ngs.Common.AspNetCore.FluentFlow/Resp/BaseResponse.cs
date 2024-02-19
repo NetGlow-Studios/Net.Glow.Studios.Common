@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Ngs.Common.AspNetCore.FluentFlow.Enums;
 
 namespace Ngs.Common.AspNetCore.FluentFlow.Resp;
@@ -36,5 +37,15 @@ public class BaseResponse
         });
 
         return result;
+    }
+    
+    public virtual string ToJson()
+    {
+        return JsonConvert.SerializeObject(new
+        {
+            content = Content,
+            statusCode = (int)StatusCode,
+            requiredAction = RequiredAction
+        });
     }
 }
