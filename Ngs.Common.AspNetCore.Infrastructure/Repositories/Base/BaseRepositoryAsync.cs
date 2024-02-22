@@ -7,7 +7,12 @@ using Ngs.Common.AspNetCore.Infrastructure.Repositories.Base.Interfaces;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Repositories.Base;
 
-public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : IBaseRepositoryAsync<T>, IBaseRepositoryReadOnlyAsync<T> where T : BaseEntity
+/// <summary>
+/// Base repository for all repositories that are async
+/// </summary>
+/// <param name="applicationDbContext"> The application db context </param>
+/// <typeparam name="T"> The entity type </typeparam>
+public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : IBaseRepositoryAsync<T> where T : BaseEntity
 {
     private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();
 
@@ -62,8 +67,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await _dbSet.CountAsync(cancellationToken);
     }
 
-    public async Task<int> CountWhereAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default)
+    public async Task<int> CountWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
         return await _dbSet.CountAsync(predicate, cancellationToken: cancellationToken);
     }
@@ -73,9 +77,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await CountWhereAsync(x => x.Status == statusEnum, cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -84,9 +89,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -95,10 +101,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetWithStatusAsync(StatusEnum status,
-        CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<ICollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -107,9 +113,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => x.Status == status).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetWithoutStatusAsync(StatusEnum status,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<ICollection<T>> GetWithoutStatusAsync(StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -118,9 +125,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => x.Status != status).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -129,10 +137,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => x.Status == status).Take(n).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids,
-        CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -141,10 +149,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => ids.Contains(x.Id)).ToListAsync(cancellationToken);
     }
 
-    public async Task<T> GetFirstAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<T> GetFirstAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -153,9 +161,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.FirstAsync(predicate, cancellationToken);
     }
 
-    public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -164,10 +173,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
-    public async Task<T> GetLastAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<T> GetLastAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -176,9 +185,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.LastAsync(predicate, cancellationToken);
     }
 
-    public async Task<T?> GetLastOrDefaultAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<T?> GetLastOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -187,9 +197,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.LastOrDefaultAsync(predicate, cancellationToken);
     }
 
-    public async Task<T?> GetLastCreatedAsync(CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<T?> GetLastCreatedAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -198,9 +209,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.OrderBy(x => x.CreatedAt).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<T?> GetLastUpdatedAsync(CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<T?> GetLastUpdatedAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -209,9 +221,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.OrderBy(x => x.UpdatedAt).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<T?> GetRandomAsync(CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<T?> GetRandomAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var rand = new Random();
 
         var query = includeProperties
@@ -224,9 +237,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return entities[rand.Next(entities.Count - 1)];
     }
 
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) =>
@@ -235,9 +249,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetPageAsync(int page, int pageSize, CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<ICollection<T>> GetPageAsync(int page, int pageSize, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) => current.Include(includeProperty!));
@@ -245,10 +260,10 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Skip(page * pageSize).Take(pageSize).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetPageWhereAsync(Expression<Func<T, bool>> predicate, int page, int pageSize,
-        CancellationToken cancellationToken = default,
-        params string[] includeProperties)
+    public async Task<ICollection<T>> GetPageWhereAsync(Expression<Func<T, bool>> predicate, int page, int pageSize, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
+        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
                 _dbSet, (current, includeProperty) => current.Include(includeProperty!));
@@ -385,18 +400,5 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         var entities = await GetAllAsync(cancellationToken);
 
         return entities.Any(x => x.Status == status);
-    }
-    
-    public Guid? Create(T entity)
-    {
-        entity.Id = Guid.NewGuid();
-        entity.Status = StatusEnum.Active;
-        entity.CreatedAt = DateTime.UtcNow;
-        entity.UpdatedAt = DateTime.UtcNow;
-
-        _dbSet.Add(entity);
-        applicationDbContext.SaveChanges();
-
-        return entity.Id;
     }
 }
