@@ -1,1 +1,1 @@
-# NetGlowStudios-Template
+# Net.Glow.Studios.Common
