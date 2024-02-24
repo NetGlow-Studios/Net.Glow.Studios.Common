@@ -6,10 +6,28 @@ namespace Ngs.Common.AspNetCore.FluentFlow.Resp;
 
 public class InternalErrorFluentResponse : BaseResponse
 {
+    /// <summary>
+    /// The id of the modal.
+    /// </summary>
     public string ModalId { get; set; }
-    public string ModalTitle { get; set; }
-    public string ModalMessage { get; set; }
     
+    /// <summary>
+    /// The title of the modal.
+    /// </summary>
+    public string ModalTitle { get; set; }
+    
+    /// <summary>
+    /// The message of the modal.
+    /// </summary>
+    public string ModalMessage { get; set; }
+
+    public InternalErrorFluentResponse()
+    {
+        ModalId = "internalErrorModal";
+        ModalTitle = "Internal Error";
+        ModalMessage = "An internal error occurred. Please try again later.";
+    }
+
     /// <summary>
     /// Returns the action result of the fluentResponse.
     /// </summary>
@@ -27,6 +45,10 @@ public class InternalErrorFluentResponse : BaseResponse
         return base.GetActionResult();
     }
 
+    /// <summary>
+    /// Returns the fluentResponse as a json string.
+    /// </summary>
+    /// <returns></returns>
     public override string ToJson()
     {
         Content = new

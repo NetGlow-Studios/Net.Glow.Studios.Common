@@ -55,7 +55,7 @@ public class AccessControlFilter<TIPrivilege> : IAsyncActionFilter where TIPrivi
                 context.Result = response.GetActionResult();
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new IndexOutOfRangeException("Unknown PrivilegeIfDeclined value.");
         }
     }
 }

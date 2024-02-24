@@ -6,13 +6,35 @@ namespace Ngs.Common.AspNetCore.FluentFlow.Resp;
 
 public class DownloadFileFluentResponse : BaseResponse
 {
+    /// <summary>
+    /// If the file is a physical file or a byte array.
+    /// </summary>
     public bool IsPhysicalFile { get; set; }
+    
+    /// <summary>
+    /// Path to the file.
+    /// </summary>
     public string? FilePath { get; set; }
+    
+    /// <summary>
+    /// Content of the file.
+    /// </summary>
     public byte[] FileContent { get; set; } = Array.Empty<byte>();
+    
+    /// <summary>
+    /// Name of the file.
+    /// </summary>
     public string FileName { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Content type of the file.
+    /// </summary>
     public string ContentType { get; set; } = "application/octet-stream";
 
+    /// <summary>
+    /// Returns an ActionResult based on the fluentResponse.
+    /// </summary>
+    /// <returns></returns>
     public override ActionResult GetActionResult()
     {
         StatusCode = HttpStatusCode.OK;

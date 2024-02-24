@@ -1,20 +1,41 @@
-using Ngs.Common.AspNetCore.Entities.Base;
-using Ngs.Common.AspNetCore.Enums.Base;
+using Ngs.Common.AspNetCore.Entities;
+using Ngs.Common.AspNetCore.Enums;
 
 namespace Ngs.Common.AspNetCore.DTO;
 
+/// <summary>
+/// Base DTO for all DTOs.
+/// </summary>
 public abstract class BaseDto
 {
+    /// <summary>
+    /// Id of the entity.
+    /// </summary>
     public Guid Id { get; set; }
 
+    /// <summary>
+    /// Status of the entity.
+    /// </summary>
     public StatusEnum Status { get; set; }
 
+    /// <summary>
+    /// Date and time when the entity was created.
+    /// </summary>
     public DateTime CreatedAt { get; set; }
 
+    /// <summary>
+    /// User who created the entity.
+    /// </summary>
     public string? CreatedBy { get; set; }
 
+    /// <summary>
+    /// Date and time when the entity was updated.
+    /// </summary>
     public DateTime UpdatedAt { get; set; }
 
+    /// <summary>
+    /// User who updated the entity.
+    /// </summary>
     public string? UpdatedBy { get; set; }
     
     // protected BaseDto()
@@ -26,6 +47,10 @@ public abstract class BaseDto
     //     UpdatedBy = null;
     // }
 
+    /// <summary>
+    /// Constructor for the base DTO.
+    /// </summary>
+    /// <param name="entity"> Entity to be converted to DTO. </param>
     protected BaseDto(BaseEntity entity)
     {
         Id = entity.Id;

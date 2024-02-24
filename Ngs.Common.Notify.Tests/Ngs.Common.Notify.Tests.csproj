@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ngs.Common.Notify\Ngs.Common.Notify.csproj" />
+      <ProjectReference Include="..\Ngs.Common.AspNetCore.Notify\Ngs.Common.AspNetCore.Notify.csproj" />
     </ItemGroup>
 
 </Project>

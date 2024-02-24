@@ -10,15 +10,16 @@ namespace Ngs.Common.AspNetCore.AccessControl.Extensions;
 public static class BuilderExtensions
 {
     /// <summary>
-    /// Add user privilege auth.
+    /// Add user privilege authentication for the endpoints.
     /// </summary>
     /// <param name="services"> Services to add user privilege auth to. </param>
     /// <typeparam name="TIPrivilege"> Type of the service privilege. </typeparam>
     /// <returns></returns>
     public static IServiceCollection AddUserPrivilegeAuth<TIPrivilege>(this IServiceCollection services) where TIPrivilege : class, IPrivilege
     {
-        services.AddScoped<AccessControlFilter<TIPrivilege>>(x =>
-            new AccessControlFilter<TIPrivilege>(x.GetRequiredService<TIPrivilege>(), default!, default!, default!, default!));
+        services.AddScoped<AccessControlFilter<TIPrivilege>>(x 
+            => new AccessControlFilter<TIPrivilege>(x.GetRequiredService<TIPrivilege>(), 
+                default!, default!, default!, default!));
 
         return services;
     }

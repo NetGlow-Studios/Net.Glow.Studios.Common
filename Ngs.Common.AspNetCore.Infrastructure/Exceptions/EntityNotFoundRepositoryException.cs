@@ -1,7 +1,9 @@
-using Ngs.Common.AspNetCore.Exceptions.Base;
+using Ngs.Common.AspNetCore.Exceptions;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Exceptions;
-
+/// <summary>
+/// Exception for when an entity is not found in the repository
+/// </summary>
 public class EntityNotFoundRepositoryException : BaseNotFoundException
 {
     public EntityNotFoundRepositoryException(string? message) : base(message)

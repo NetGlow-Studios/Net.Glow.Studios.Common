@@ -27,6 +27,21 @@ public static class ResponseExtensions
     }
 
     /// <summary>
+    /// Returns a fluentFluentResponse with a modal for bootstrap 5.
+    /// </summary>
+    /// <param name="fluentResponse"></param>
+    /// <param name="controller"></param>
+    /// <param name="partialView"></param>
+    /// <returns></returns>
+    public static FluentResponse ReturnModal(this FluentResponse fluentResponse, Controller controller,
+        PartialViewResult partialView)
+    {
+        fluentResponse.RequiredAction = ResponseActionEnum.Modal;
+        fluentResponse.Content = controller.RenderViewToString(partialView.ViewName!, partialView.Model);
+        return fluentResponse;
+    }
+
+    /// <summary>
     /// Returns a fluentFluentResponse with a partial view.
     /// </summary>
     /// <param name="fluentResponse"> The fluentFluentResponse. </param>
@@ -47,7 +62,8 @@ public static class ResponseExtensions
     /// <param name="fluentResponse"></param>
     /// <param name="localUrl"></param>
     /// <returns></returns>
-    public static FluentResponse RedirectToAction(this FluentResponse fluentResponse, string? localUrl, string target = "_self")
+    public static FluentResponse RedirectToAction(this FluentResponse fluentResponse, string? localUrl,
+        string target = "_self")
     {
         fluentResponse.RequiredAction = ResponseActionEnum.RedirectToAction;
         fluentResponse.Content = new
@@ -114,9 +130,16 @@ public static class ResponseExtensions
     /// </summary>
     /// <param name="fluentResponse"></param>
     /// <returns></returns>
-    public static FormValidationFluentResponse NoAction(this FormValidationFluentResponse fluentResponse)
+    public static FluentResponse NoAction(this FluentResponse fluentResponse)
     {
         fluentResponse.RequiredAction = ResponseActionEnum.None;
+        return fluentResponse;
+    }
+
+    public static FluentResponse ReturnCustom(this FluentResponse fluentResponse, object? content)
+    {
+        fluentResponse.RequiredAction = ResponseActionEnum.None;
+        fluentResponse.Content = content;
         return fluentResponse;
     }
 }

@@ -1,6 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Ngs.Common.AspNetCore.Enums.Language;
+using Ngs.Common.AspNetCore.Enums;
 using Ngs.Common.AspNetCore.FluentFlow.Enums;
 using Ngs.Common.AspNetCore.FluentFlow.Models;
 
@@ -38,6 +38,7 @@ public class FormValidationFluentResponse(LanguageEnum? currentLanguage = null) 
     {
         IsSuccess = false;
         RequiredAction = ResponseActionEnum.HandleError;
+        Content = null;
         Errors!.Add(new ValidationErrorModel(key, id, content, language));
     }
 
@@ -47,9 +48,25 @@ public class FormValidationFluentResponse(LanguageEnum? currentLanguage = null) 
     /// <returns> The action result of the fluentResponse. </returns>
     public override ActionResult GetActionResult()
     {
-        Content ??= Errors;
+        var currentErrors = new List<ValidationErrorModel>();
+        
+        foreach (var error in Errors)
+        {
+            if (error.Language == CurrentLanguage)
+            {
+                currentErrors.Add(error);
+            }
+            else if (error.Language == default)
+            {
+                currentErrors.Add(error);
+            }
+        }
+
+        if (Errors.Count == 0) return base.GetActionResult();
+        
+        Content ??= CurrentLanguage == null ? Errors.Where(x=>x.Language == default) : currentErrors;
         StatusCode = HttpStatusCode.BadRequest;
-    
+
         return base.GetActionResult();
     }
 }

@@ -4,9 +4,17 @@ using Ngs.Common.AspNetCore.Tools.Exceptions;
 
 namespace Ngs.Common.AspNetCore.Tools.Attributes.Form;
 
+/// <summary>
+/// Attribute to limit the file size of the uploaded files.
+/// </summary>
+/// <param name="maxFileSize"> The maximum file size in bytes. </param>
 [AttributeUsage(AttributeTargets.Method)]
 public class MaxFileSizeAttribute(long maxFileSize) : Attribute, IActionFilter
 {
+    /// <summary>
+    /// Attribute to limit the file size of the uploaded files.
+    /// </summary>
+    /// <param name="maxFileSize"> The maximum file size in bytes. </param>
     public MaxFileSizeAttribute(MaxFileSizeEnum maxFileSize):this((long)maxFileSize)
     {
     }

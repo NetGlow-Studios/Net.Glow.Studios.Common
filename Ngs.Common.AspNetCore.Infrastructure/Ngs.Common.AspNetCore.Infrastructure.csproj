@@ -20,4 +20,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Repositories\Base\" />
+    </ItemGroup>
+
 </Project>

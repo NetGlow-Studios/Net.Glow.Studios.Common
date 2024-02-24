@@ -1,7 +1,10 @@
-using Ngs.Common.AspNetCore.Exceptions.Base;
+using Ngs.Common.AspNetCore.Exceptions;
 
 namespace Ngs.Common.AspNetCore.Tools.Exceptions;
 
+/// <summary>
+/// Exception thrown when file size limit is exceeded.
+/// </summary>
 public class FileSizeLimitExceededException : BaseException
 {
     public FileSizeLimitExceededException(string? message) : base(message)

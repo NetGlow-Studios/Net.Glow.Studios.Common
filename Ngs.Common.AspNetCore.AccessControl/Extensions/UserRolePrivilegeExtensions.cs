@@ -33,8 +33,7 @@ public static class UserRolePrivilegeExtensions
     /// <param name="state"> State to check privilege for. </param>
     /// <returns> True if string has privilege, false otherwise. </returns>
     /// <exception cref="StringCannotBeFlagException"> Thrown when string cannot be flag. </exception>
-    public static bool HasPrivilege(this string str, Enum privilege,
-        UserPrivilegeStateEnum state = UserPrivilegeStateEnum.Granted)
+    public static bool HasPrivilege(this string str, Enum privilege, UserPrivilegeStateEnum state = UserPrivilegeStateEnum.Granted)
     {
         if (str.Any(x => x != '0' && x != '1'))
         {

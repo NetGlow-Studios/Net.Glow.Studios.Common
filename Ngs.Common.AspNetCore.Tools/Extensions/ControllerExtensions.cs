@@ -6,9 +6,20 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Ngs.Common.AspNetCore.Tools.Extensions;
 
+/// <summary>
+/// Controller extensions
+/// </summary>
 public static class ControllerExtensions
 {
-    public static string RenderViewToString(this Controller controller, string viewName, object? model)
+    /// <summary>
+    /// Render view to string
+    /// </summary>
+    /// <param name="controller"> Controller </param>
+    /// <param name="viewName"> View name </param>
+    /// <param name="model"> Model</param>
+    /// <returns> View as string </returns>
+    /// <exception cref="ArgumentNullException"> View not found. </exception>
+    public static string RenderViewToString(this Controller controller, string viewName, object? model = null)
     {
         var httpContext = controller.ControllerContext.HttpContext;
         var actionContext = new ActionContext(httpContext, controller.RouteData, controller.ControllerContext.ActionDescriptor);

@@ -1,5 +1,8 @@
 namespace Ngs.Common.AspNetCore.Infrastructure.Exceptions;
 
+/// <summary>
+/// Thrown when entity was not created in repository
+/// </summary>
 public class EntityNotCreatedRepositoryException : Exception
 {
     public EntityNotCreatedRepositoryException()
