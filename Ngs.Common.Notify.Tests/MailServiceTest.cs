@@ -4,6 +4,8 @@ namespace Ngs.Common.Notify.Tests;
 
 public class MailServiceTest
 {
+    private static readonly string[] styles = new[] { "background-color:#DD554B" };
+
     [Fact]
     public async Task SendEmailTestAsync()
     {
@@ -16,7 +18,7 @@ public class MailServiceTest
         var body = new MailBodyBuilder(mailBuilder.GetSubject());
 
         //Configure style class
-        body.AddClass("color-primary", new[] { "background-color:#DD554B" });
+        body.AddClass("color-primary", styles);
 
         //Add Hearders
         body.AddH1("To jest testowy nagłówek 1 stopnia", "color-primary");
