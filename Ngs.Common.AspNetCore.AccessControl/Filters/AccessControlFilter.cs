@@ -5,7 +5,6 @@ using Ngs.Common.AspNetCore.AccessControl.Enums;
 using Ngs.Common.AspNetCore.AccessControl.Interfaces;
 using Ngs.Common.AspNetCore.FluentFlow.Extensions;
 using Ngs.Common.AspNetCore.FluentFlow.Resp;
-using Ngs.Common.AspNetCore.Tools.Extensions;
 
 namespace Ngs.Common.AspNetCore.AccessControl.Filters;
 

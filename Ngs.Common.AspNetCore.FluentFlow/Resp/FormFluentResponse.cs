@@ -10,7 +10,7 @@ namespace Ngs.Common.AspNetCore.FluentFlow.Resp;
 /// FluentResponse model for form validation.
 /// </summary>
 /// <param name="currentLanguage"> The current language of the fluentResponse. </param>
-public class FormValidationFluentResponse(LanguageEnum? currentLanguage = null) : FluentResponse
+public class FormFluentResponse(LanguageEnum? currentLanguage = null) : FluentResponse
 {
     /// <summary>
     /// Indicates if the validation was successful.

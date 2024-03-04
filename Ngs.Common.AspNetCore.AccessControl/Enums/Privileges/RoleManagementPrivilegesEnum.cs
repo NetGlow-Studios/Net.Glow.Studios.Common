@@ -99,6 +99,6 @@ public enum RoleManagementPrivilegesEnum
     PrivilegeSongbookUpdate = 102,
     PrivilegeSongbookRemove = 103,
     PrivilegeSongbookSongUpdate = 104,
-    PrivilegeSongbookSongRemove = 105,
+    PrivilegeSongbookSongRemove = 105
     //-------------------------
 }

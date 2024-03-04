@@ -7,22 +7,22 @@ public enum RoleFeaturePrivilegesEnum
     PrivilegeCalendarAccess = 1,
     PrivilegeCalendarEntryCreate = 2,
     PrivilegeCalendarEntryNotification = 3,
-    PrivilegeCalendarAccessToAllEntries =  4,
+    PrivilegeCalendarAccessToAllEntries = 4,
     //-------------------------
-    
+
     //Bible
     //-------------------------
-    PrivilegeBibleFormat = 10, //bookmarks, verse highlight, etc...
+    //PrivilegeBibleFormat = 10, //bookmarks, verse highlight, etc...
     //-------------------------
-    
+
     //Songbook
     //-------------------------
-    PrivilegeSongbookAccess = 20,
-    PrivilegeSongbookFormat = 21, //bookmarks, favourites, etc...
+    //PrivilegeSongbookAccess = 20,
+    // PrivilegeSongbookFormat = 21, //bookmarks, favourites, etc...
     //-------------------------
-    
+
     //Service Creator
     //-------------------------
-    PrivilegeServiceCreatorAccess = 30,
+    // PrivilegeServiceCreatorAccess = 30
     //-------------------------
 }

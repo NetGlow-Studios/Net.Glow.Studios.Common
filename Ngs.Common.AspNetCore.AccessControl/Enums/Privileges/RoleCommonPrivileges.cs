@@ -17,7 +17,7 @@ public enum RoleCommonPrivileges
     //Contact
     //-------------------------
     PrivilegeContactAccess = 20,
-    PrivilegeContactForm = 21,
+    //PrivilegeContactForm = 21,
     //-------------------------
     
     //Explores 
@@ -36,6 +36,6 @@ public enum RoleCommonPrivileges
     //-------------------------
     PrivilegeMessageAccess = 50,
     PrivilegeMessageDownloadPdfAccess = 51,
-    PrivilegeMessageDownloadAudioAccess = 52,
+    PrivilegeMessageDownloadAudioAccess = 52
     //-------------------------
 }

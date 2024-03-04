@@ -10,17 +10,17 @@ public class PrivilegeConfigModel
     /// <summary>
     /// Type of the privilege. (Enum type)
     /// </summary>
-    public Type Privilege { get; set; }
+    public Type Privilege { get; }
     
     /// <summary>
     /// Data to be returned in case of declined privilege.
     /// </summary>
-    public object Data { get; set; }
+    public object Data { get; }
     
     /// <summary>
     /// Result of the declined privilege.
     /// </summary>
-    public PrivilegeIfDeclined Result { get; set; }
+    public PrivilegeIfDeclined Result { get; }
 
     public PrivilegeConfigModel(Type privilege, PrivilegeIfDeclined result, object data)
     {

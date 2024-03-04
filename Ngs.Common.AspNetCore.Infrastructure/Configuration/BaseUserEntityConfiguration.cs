@@ -20,37 +20,45 @@ public class BaseUserEntityConfiguration<TUserEntity> : IEntityTypeConfiguration
             .HasColumnOrder(0)
             .IsRequired();
         
+        builder.Property(x => x.UserName)
+            .HasColumnOrder(1)
+            .IsRequired();
+        
         builder.Property(x => x.PersonalName)
             .HasMaxLength(50)
-            .HasColumnOrder(1)
+            .HasColumnOrder(2)
             .IsRequired();
         
         builder.Property(x => x.Surname)
             .HasMaxLength(50)
-            .HasColumnOrder(2)
+            .HasColumnOrder(3)
             .IsRequired();
-
-        builder.Property(x => x.UserName)
-            .HasColumnOrder(3);
         
-        builder.Property(x => x.IsAdmin)
+        builder.Property(x=>x.PhoneNumber)
+            .HasMaxLength(20)
             .HasColumnOrder(4);
         
-        builder.Property(x => x.EmailConfirmed)
+        builder.Property(x => x.IsAdmin)
             .HasColumnOrder(5);
+        
+        builder.Property(x => x.EmailConfirmed)
+            .HasColumnOrder(6);
+
+        builder.Property(x => x.IsBanned)
+            .HasColumnOrder(7);
+        
+        builder.Property(x => x.VerifiedAt)
+            .HasColumnType("datetime2(0)")
+            .HasColumnOrder(8);
+        
+        builder.Property(x => x.LastPasswordUpdateAt)
+            .HasColumnType("datetime2(0)")
+            .HasColumnOrder(9)
+            .IsRequired();
         
         builder.Property(x => x.CreatedAt)
             .HasColumnType("datetime2(0)")
             .HasColumnOrder(99)
-            .IsRequired();
-        
-        builder.Property(x => x.VerifiedAt)
-            .HasColumnType("datetime2(0)")
-            .HasColumnOrder(6);
-        
-        builder.Property(x => x.LastPasswordUpdateAt)
-            .HasColumnType("datetime2(0)")
-            .HasColumnOrder(7)
             .IsRequired();
     }
 }

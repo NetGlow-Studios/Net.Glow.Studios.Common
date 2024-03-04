@@ -3,7 +3,7 @@ using Ngs.Common.AspNetCore.FluentFlow.Resp;
 namespace Ngs.Common.AspNetCore.FluentFlow.Extensions
 {
     /// <summary>
-    /// Extension methods for <see cref="FormValidationFluentResponse"/>.
+    /// Extension methods for <see cref="FormFluentResponse"/>.
     /// </summary>
     public static class FormValidationResponseExtensions
     {
@@ -12,9 +12,9 @@ namespace Ngs.Common.AspNetCore.FluentFlow.Extensions
         /// </summary>
         /// <param name="fluentResponse"></param>
         /// <returns></returns>
-        public static FormValidationFluentResponse IsSucceeded(this FormValidationFluentResponse fluentResponse)
+        public static FormFluentResponse IsSucceeded(this FormFluentResponse fluentResponse)
         {
-            return !fluentResponse.IsSuccess ? new FormValidationFluentResponse() : fluentResponse;
+            return !fluentResponse.IsSuccess ? new FormFluentResponse() : fluentResponse;
         }
         
         /// <summary>
@@ -22,9 +22,9 @@ namespace Ngs.Common.AspNetCore.FluentFlow.Extensions
         /// </summary>
         /// <param name="fluentResponse"></param>
         /// <returns></returns>
-        public static FormValidationFluentResponse IsNotSucceeded(this FormValidationFluentResponse fluentResponse)
+        public static FormFluentResponse IsNotSucceeded(this FormFluentResponse fluentResponse)
         {
-            return fluentResponse.IsSuccess ? new FormValidationFluentResponse() : fluentResponse;
+            return fluentResponse.IsSuccess ? new FormFluentResponse() : fluentResponse;
         }
     }
 }

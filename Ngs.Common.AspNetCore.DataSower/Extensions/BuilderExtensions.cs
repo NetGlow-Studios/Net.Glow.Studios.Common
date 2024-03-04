@@ -81,9 +81,7 @@ public static class BuilderExtensions
     
     private static IEnumerable<Type> GetDerivedTypes<TBase>()
     {
-        var baseType = typeof(TBase);
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
-            .Where(p => baseType.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract);
+        return AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p 
+            => typeof(TBase).IsAssignableFrom(p) && p is { IsClass: true, IsAbstract: false });
     }
 }

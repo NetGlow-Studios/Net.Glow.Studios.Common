@@ -21,7 +21,7 @@ public static class BuilderExtensions
     /// <typeparam name="TUser"> The type of the user class. </typeparam>
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
-    public static IServiceCollection AddUserIdentity<TUser, TDbContext>(this IServiceCollection services,
+    public static IServiceCollection AddUserIdentity<TUser, TDbContext>(this IServiceCollection services, 
         bool requireConfirmedAccount = true) where TUser : IdentityUser<Guid> where TDbContext : DbContext
     {
         services.AddDefaultIdentity<TUser>(options => options.SignIn.RequireConfirmedAccount = requireConfirmedAccount)
@@ -40,8 +40,9 @@ public static class BuilderExtensions
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     /// <exception cref="ArgumentNullException"> The <paramref name="configurationManager"/> is null. </exception>
-    public static IServiceCollection AddSqlConnection<TDbContext>(this IServiceCollection services, ConfigurationManager configurationManager, string migrationAssembly = "",
-        string connectionStringKey = "DefaultConnection") where TDbContext : DbContext
+    public static IServiceCollection AddSqlConnection<TDbContext>(this IServiceCollection services, 
+        ConfigurationManager configurationManager, string migrationAssembly = "", string connectionStringKey = "DefaultConnection") 
+        where TDbContext : DbContext
     {
         if (string.IsNullOrEmpty(migrationAssembly))
         {
@@ -65,8 +66,9 @@ public static class BuilderExtensions
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     /// <exception cref="ArgumentNullException"> The <paramref name="configurationManager"/> is null. </exception>
-    public static IServiceCollection AddSqliteConnection<TDbContext>(this IServiceCollection services, ConfigurationManager configurationManager, string migrationAssembly = "",
-        string connectionStringKey = "DefaultConnection") where TDbContext : DbContext
+    public static IServiceCollection AddSqliteConnection<TDbContext>(this IServiceCollection services, 
+        ConfigurationManager configurationManager, string migrationAssembly = "", string connectionStringKey = "DefaultConnection") 
+        where TDbContext : DbContext
     {
         if (string.IsNullOrEmpty(migrationAssembly))
         {
@@ -84,7 +86,7 @@ public static class BuilderExtensions
     /// Adds the default identity system configuration for the specified user and database context.
     /// </summary>
     /// <param name="services"> The <see cref="IServiceCollection"/> to add the services to. </param>
-    /// <typeparam name="TRepoForNamespace"> The type of the repository class. </typeparam>
+    /// <typeparam name="TRepoForNamespace"> The type of the repository clas to get the assembly from. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     public static IServiceCollection AddRepositories<TRepoForNamespace>(this IServiceCollection services)
     {
