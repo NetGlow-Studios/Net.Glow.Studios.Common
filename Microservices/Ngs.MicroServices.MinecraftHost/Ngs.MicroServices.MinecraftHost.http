@@ -1,0 +1,6 @@
+@Ngs.MicroServices.MinecraftHost_HostAddress = http://localhost:5047
+
+GET {{Ngs.MicroServices.MinecraftHost_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
