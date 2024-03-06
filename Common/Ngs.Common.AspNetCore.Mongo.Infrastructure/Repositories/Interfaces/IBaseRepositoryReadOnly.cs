@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Ngs.Common.AspNetCore.Enums;
 
-namespace Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
+namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
 public interface IBaseRepositoryReadOnly<T> where T : class
 {
@@ -31,95 +31,83 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     ///     Get all records from database where.
     /// </summary>
     /// <param name="predicate"></param>
-    /// <param name="includeProperties"></param>
     /// <returns>Records from table.</returns>
-    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties);
+    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate);
 
     /// <summary>
     ///     Get all records with status.
     /// </summary>
     /// <param name="status">Record status</param>
-    /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties);
+    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status);
 
     /// <summary>
     ///     Get all records with status asynchronously.
     /// </summary>
     /// <param name="n">Amount</param>
     /// <param name="status">Record status</param>
-    /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties);
+    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status);
 
     /// <summary>
     ///     Get all records with ids asynchronously.
     /// </summary>
     /// <param name="ids"></param>
-    /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties);
+    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids);
 
     /// <summary>
     ///     Get first record with predicate.
     /// </summary>
     /// <param name="predicate"></param>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T GetFirst(Expression<Func<T, bool>> predicate, params string[] includeProperties);
+    public T GetFirst(Expression<Func<T, bool>> predicate);
 
     /// <summary>
     ///     Get first or default record with predicate.
     /// </summary>
     /// <param name="predicate"></param>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T? GetFirstOrDefault(Expression<Func<T, bool>> predicate, params string[] includeProperties);
+    public T? GetFirstOrDefault(Expression<Func<T, bool>> predicate);
 
     /// <summary>
     ///     Get last record with predicate.
     /// </summary>
     /// <param name="predicate"></param>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T GetLast(Expression<Func<T, bool>> predicate, params string[] includeProperties);
+    public T GetLast(Expression<Func<T, bool>> predicate);
 
     /// <summary>
     ///     Get last record with predicate.
     /// </summary>
     /// <param name="predicate"></param>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T? GetLastOrDefault(Expression<Func<T, bool>> predicate, params string[] includeProperties);
+    public T? GetLastOrDefault(Expression<Func<T, bool>> predicate);
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T? GetLastCreated(params string[] includeProperties);
+    public T? GetLastCreated();
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T? GetLastUpdated(params string[] includeProperties);
+    public T? GetLastUpdated();
 
     /// <summary>
     ///     Get random record.
     /// </summary>
-    /// <param name="includeProperties"></param>
     /// <returns></returns>
-    public T? GetRandom(params string[] includeProperties);
+    public T? GetRandom();
 
     /// <summary>
     ///     Get record by id.
     /// </summary>
     /// <param name="id">Record id.</param>
-    /// <param name="includeProperties"></param>
     /// <returns>Record by id.</returns>
-    public T? GetById(Guid id, params string[] includeProperties);
+    public T? GetById(Guid id);
     
     /// <summary>
     /// 

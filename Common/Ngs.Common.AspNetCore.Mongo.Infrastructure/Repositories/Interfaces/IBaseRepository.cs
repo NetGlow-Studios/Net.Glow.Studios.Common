@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Ngs.Common.AspNetCore.Entities;
 
-namespace Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
+namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T : BaseEntity
 {

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Ngs.Common.AspNetCore.Entities;
 using Ngs.Common.AspNetCore.Enums;
+using Ngs.Common.AspNetCore.Infrastructure.Exceptions;
 using Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Repositories;
@@ -20,40 +21,52 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// </summary>
     /// <param name="entity"> The entity to create </param>
     /// <returns> The id of the created entity </returns>
-    public Guid? Create(T entity)
+    public T Create(T entity)
     {
-        entity.Id = Guid.NewGuid();
-        entity.Status = StatusEnum.Active;
-        entity.CreatedAt = DateTime.UtcNow;
-        entity.UpdatedAt = DateTime.UtcNow;
-
-        _dbSet.Add(entity);
-        applicationDbContext.SaveChanges();
-
-        return entity.Id;
-    }
-    
-    /// <summary>
-    /// Create many entities
-    /// </summary>
-    /// <param name="entities"> The entities to create </param>
-    /// <returns> The ids of the created entities </returns>
-    public ICollection<Guid> CreateMany(ICollection<T> entities)
-    {
-        var ids = new List<Guid>();
-        entities.ToList().ForEach(entity =>
+        try
         {
             entity.Id = Guid.NewGuid();
             entity.Status = StatusEnum.Active;
             entity.CreatedAt = DateTime.UtcNow;
             entity.UpdatedAt = DateTime.UtcNow;
-            ids.Add(entity.Id);
-        });
 
-        _dbSet.AddRange(entities);
-        applicationDbContext.SaveChanges();
+            _dbSet.Add(entity);
+            applicationDbContext.SaveChanges();
 
-        return ids;
+            return entity;   
+        }
+        catch (Exception e)
+        {
+            throw new EntityNotCreatedRepositoryException($"Resource ({nameof(T)}) not created", e);
+        }
+    }
+
+    /// <summary>
+    /// Create many entities
+    /// </summary>
+    /// <param name="entities"> The entities to create </param>
+    /// <returns> The ids of the created entities </returns>
+    public IReadOnlyCollection<T> CreateMany(ICollection<T> entities)
+    {
+        try
+        {
+            entities.ToList().ForEach(entity =>
+            {
+                entity.Id = Guid.NewGuid();
+                entity.Status = StatusEnum.Active;
+                entity.CreatedAt = DateTime.UtcNow;
+                entity.UpdatedAt = DateTime.UtcNow;
+            });
+
+            _dbSet.AddRange(entities);
+            applicationDbContext.SaveChanges();
+
+            return entities.ToList();
+        }
+        catch (Exception e)
+        {
+            throw new EntityNotCreatedRepositoryException($"Resource ({nameof(T)}) not created", e);
+        }
     }
 
     /// <summary>
@@ -90,7 +103,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// </summary>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The number of entities </returns>
-    public ICollection<T> GetAll(params string[] includeProperties)
+    public IReadOnlyCollection<T> GetAll(params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -106,7 +119,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="predicate"> The condition to satisfy </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities that satisfy the condition </returns>
-    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties)
+    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -122,7 +135,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="status"> The status of the entities </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities with the specific status </returns>
-    public ICollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties)
+    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -155,7 +168,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="status"> The status of the entities </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities with the specific status </returns>
-    public ICollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties)
+    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -171,7 +184,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="ids"> The ids of the entities to get </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities without the specific status </returns>
-    public ICollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties)
+    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(

@@ -77,7 +77,8 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await CountWhereAsync(x => x.Status == statusEnum, cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default,
+        params string[] includeProperties)
     {
         includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         
@@ -89,7 +90,8 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<IReadOnlyCollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate,
+        CancellationToken cancellationToken = default, params string[] includeProperties)
     {
         includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         
@@ -101,7 +103,8 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<IReadOnlyCollection<T>> GetWithStatusAsync(StatusEnum status,
+        CancellationToken cancellationToken = default, params string[] includeProperties)
     {
         includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         
@@ -125,7 +128,8 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => x.Status != status).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<IReadOnlyCollection<T>> GetTopNByStatusAsync(int n, StatusEnum status,
+        CancellationToken cancellationToken = default, params string[] includeProperties)
     {
         includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         
@@ -137,7 +141,8 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => x.Status == status).Take(n).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<IReadOnlyCollection<T>> GetByIdsAsync(IEnumerable<Guid> ids,
+        CancellationToken cancellationToken = default, params string[] includeProperties)
     {
         includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         
@@ -329,7 +334,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
             entity.Status = StatusEnum.Deleted;
         }
 
-        await UpdateManyAsync(entities, cancellationToken);
+        await UpdateManyAsync(entities.ToList(), cancellationToken);
     }
 
     public async Task RemoveSoftWhereAsync(Expression<Func<T, bool>> predicate,

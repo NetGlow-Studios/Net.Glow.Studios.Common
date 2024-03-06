@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Context;
 
-public class BaseUserIdentityDbContext<TDbContext, TUser>(DbContextOptions<TDbContext> options) 
+public abstract class BaseUserIdentityDbContext<TDbContext, TUser>(DbContextOptions<TDbContext> options) 
     : IdentityUserContext<TUser, Guid>(options) where TDbContext : DbContext where TUser : IdentityUser<Guid>
 {
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using Ngs.Common.AspNetCore.Infrastructure.Repositories;
 using Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
 
