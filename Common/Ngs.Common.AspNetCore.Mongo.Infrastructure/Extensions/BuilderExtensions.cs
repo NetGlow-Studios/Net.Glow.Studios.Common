@@ -26,4 +26,12 @@ public static class BuilderExtensions
         
         return services;
     }
+    
+    public static IServiceCollection AddMongoRepository<TRepository>(this IServiceCollection services, string databaseName, string collectionName) where TRepository : class
+    {
+        services.AddScoped<TRepository>(provider 
+            => (TRepository)Activator.CreateInstance(typeof(TRepository), provider.GetRequiredService<IMongoClient>().GetDatabase(databaseName), collectionName)!);
+        
+        return services;
+    }
 }

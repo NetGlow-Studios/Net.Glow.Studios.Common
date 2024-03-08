@@ -25,21 +25,21 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// </summary>
     /// <param name="includeProperties">Entity Children</param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetAll(params string[] includeProperties);
+    public ICollection<T> GetAll(params string[] includeProperties);
 
     /// <summary>
     ///     Get all records from database where.
     /// </summary>
     /// <param name="predicate"></param>
     /// <returns>Records from table.</returns>
-    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate);
+    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate);
 
     /// <summary>
     ///     Get all records with status.
     /// </summary>
     /// <param name="status">Record status</param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status);
+    public ICollection<T> GetWithStatus(StatusEnum status);
 
     /// <summary>
     ///     Get all records with status asynchronously.
@@ -47,14 +47,14 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// <param name="n">Amount</param>
     /// <param name="status">Record status</param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status);
+    public ICollection<T> GetTopNByStatus(int n, StatusEnum status);
 
     /// <summary>
     ///     Get all records with ids asynchronously.
     /// </summary>
     /// <param name="ids"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids);
+    public ICollection<T> GetByIds(IEnumerable<Guid> ids);
 
     /// <summary>
     ///     Get first record with predicate.

@@ -46,7 +46,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// </summary>
     /// <param name="entities"> The entities to create </param>
     /// <returns> The ids of the created entities </returns>
-    public IReadOnlyCollection<T> CreateMany(ICollection<T> entities)
+    public ICollection<T> CreateMany(ICollection<T> entities)
     {
         try
         {
@@ -103,7 +103,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// </summary>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The number of entities </returns>
-    public IReadOnlyCollection<T> GetAll(params string[] includeProperties)
+    public ICollection<T> GetAll(params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -119,7 +119,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="predicate"> The condition to satisfy </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities that satisfy the condition </returns>
-    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties)
+    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -135,7 +135,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="status"> The status of the entities </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities with the specific status </returns>
-    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties)
+    public ICollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -168,7 +168,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="status"> The status of the entities </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities with the specific status </returns>
-    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties)
+    public ICollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(
@@ -184,7 +184,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="ids"> The ids of the entities to get </param>
     /// <param name="includeProperties"> The properties to include related entities </param>
     /// <returns> The entities without the specific status </returns>
-    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties)
+    public ICollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties)
     {
         var query = includeProperties
             .Aggregate<string?, IQueryable<T>>(

@@ -27,7 +27,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="cancellationToken"></param>
     /// <param name="includeProperties">Entity Children</param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default,
+    public Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default,
         params string[] includeProperties);
 
     /// <summary>
@@ -37,7 +37,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="cancellationToken"></param>
     /// <param name="includeProperties"></param>
     /// <returns>Records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate,
+    public Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate,
         CancellationToken cancellationToken = default, params string[] includeProperties);
 
     /// <summary>
@@ -47,7 +47,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="cancellationToken"></param>
     /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default,
+    public Task<ICollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default,
         params string[] includeProperties);
 
     /// <summary>
@@ -58,7 +58,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="cancellationToken"></param>
     /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetTopNByStatusAsync(int n, StatusEnum status,
+    public Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status,
         CancellationToken cancellationToken = default, params string[] includeProperties);
 
     /// <summary>
@@ -68,7 +68,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="cancellationToken"></param>
     /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default,
+    public Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default,
         params string[] includeProperties);
     
     /// <summary>

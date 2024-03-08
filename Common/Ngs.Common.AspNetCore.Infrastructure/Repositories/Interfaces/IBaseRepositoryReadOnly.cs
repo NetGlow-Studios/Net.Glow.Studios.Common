@@ -25,7 +25,7 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// </summary>
     /// <param name="includeProperties">Entity Children</param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetAll(params string[] includeProperties);
+    public ICollection<T> GetAll(params string[] includeProperties);
 
     /// <summary>
     ///     Get all records from database where.
@@ -33,7 +33,7 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// <param name="predicate"></param>
     /// <param name="includeProperties"></param>
     /// <returns>Records from table.</returns>
-    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties);
+    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties);
 
     /// <summary>
     ///     Get all records with status.
@@ -41,7 +41,7 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// <param name="status">Record status</param>
     /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties);
+    public ICollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties);
 
     /// <summary>
     ///     Get all records with status asynchronously.
@@ -50,7 +50,15 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// <param name="status">Record status</param>
     /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties);
+    public ICollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties);
+
+    /// <summary>
+    ///    Get all records without status.
+    /// </summary>
+    /// <param name="status"> Record status</param>
+    /// <param name="includeProperties"> Entity Children</param>
+    /// <returns> All records from table where status is not equal to given status.</returns>
+    public ICollection<T> GetWithoutStatus(StatusEnum status, params string[] includeProperties);
 
     /// <summary>
     ///     Get all records with ids asynchronously.
@@ -58,7 +66,7 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     /// <param name="ids"></param>
     /// <param name="includeProperties"></param>
     /// <returns>All records from table.</returns>
-    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties);
+    public ICollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties);
 
     /// <summary>
     ///     Get first record with predicate.

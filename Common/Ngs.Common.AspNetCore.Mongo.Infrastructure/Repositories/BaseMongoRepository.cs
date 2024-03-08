@@ -118,27 +118,27 @@ public abstract class BaseMongoRepository<T>(IMongoDatabase database, string col
         return (int)_collection.CountDocuments(Builders<T>.Filter.Eq(x => x.Status, statusEnum));
     }
 
-    public IReadOnlyCollection<T> GetAll(params string[] includeProperties)
+    public ICollection<T> GetAll(params string[] includeProperties)
     {
         return _collection.Find(Builders<T>.Filter.Eq(x => x.Status, StatusEnum.Active)).ToList();
     }
 
-    public IReadOnlyCollection<T> GetAllWhere(Expression<Func<T, bool>> predicate)
+    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate)
     {
         return _collection.Find(Builders<T>.Filter.Where(predicate)).ToList();
     }
 
-    public IReadOnlyCollection<T> GetWithStatus(StatusEnum status)
+    public ICollection<T> GetWithStatus(StatusEnum status)
     {
         return _collection.Find(Builders<T>.Filter.Eq(x => x.Status, status)).ToList();
     }
 
-    public IReadOnlyCollection<T> GetTopNByStatus(int n, StatusEnum status)
+    public ICollection<T> GetTopNByStatus(int n, StatusEnum status)
     {
         return _collection.Find(Builders<T>.Filter.Eq(x => x.Status, status)).Limit(n).ToList();
     }
 
-    public IReadOnlyCollection<T> GetByIds(IEnumerable<Guid> ids)
+    public ICollection<T> GetByIds(IEnumerable<Guid> ids)
     {
         return _collection.Find(Builders<T>.Filter.In(x => x.Id, ids)).ToList();
     }

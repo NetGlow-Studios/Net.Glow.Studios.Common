@@ -26,27 +26,29 @@ public class BaseMongoRepositoryAsync<T>(IMongoDatabase database, string collect
         return (int)await _collection.CountDocumentsAsync(Builders<T>.Filter.Eq(x => x.Status, statusEnum), cancellationToken: cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _collection.Find(Builders<T>.Filter.Eq(x => x.Status, StatusEnum.Active)).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         return await _collection.Find(Builders<T>.Filter.Where(predicate)).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default)
+    public async Task<ICollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default)
     {
         return await _collection.Find(Builders<T>.Filter.Eq(x => x.Status, status)).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default)
+    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status,
+        CancellationToken cancellationToken = default)
     {
         return await _collection.Find(Builders<T>.Filter.Eq(x => x.Status, status)).Limit(n).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+    public async Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
     {
         return await _collection.Find(Builders<T>.Filter.In(x => x.Id, ids)).ToListAsync(cancellationToken);
     }
@@ -127,7 +129,7 @@ public class BaseMongoRepositoryAsync<T>(IMongoDatabase database, string collect
     {
         try
         {
-            entity.Id = Guid.NewGuid();
+            entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
             entity.CreatedAt = DateTime.UtcNow;
             entity.UpdatedAt = DateTime.UtcNow;
             entity.Status = StatusEnum.Active;
@@ -148,7 +150,7 @@ public class BaseMongoRepositoryAsync<T>(IMongoDatabase database, string collect
         {
             foreach (var entity in entities)
             {
-                entity.Id = Guid.NewGuid();
+                entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
                 entity.CreatedAt = DateTime.UtcNow;
                 entity.UpdatedAt = DateTime.UtcNow;
                 entity.Status = StatusEnum.Active;

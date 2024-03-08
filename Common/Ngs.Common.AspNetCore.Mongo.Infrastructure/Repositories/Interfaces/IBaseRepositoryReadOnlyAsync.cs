@@ -25,7 +25,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default);
+    public Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all records where from database where asynchronously.
@@ -33,7 +33,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="predicate"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>Records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+    public Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all records with status asynchronously.
@@ -41,7 +41,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="status">Record status</param>
     /// <param name="cancellationToken"></param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default);
+    public Task<ICollection<T>> GetWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all records with status asynchronously.
@@ -50,7 +50,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="status">Record status</param>
     /// <param name="cancellationToken"></param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default);
+    public Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all records with ids asynchronously.
@@ -58,7 +58,7 @@ public interface IBaseRepositoryReadOnlyAsync<T> where T : class
     /// <param name="ids"> Records id.</param>
     /// <param name="cancellationToken"> Cancellation token.</param>
     /// <returns>All records from table.</returns>
-    public Task<IReadOnlyCollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
+    public Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
     
     /// <summary>
     ///     Get first record with predicate asynchronously.

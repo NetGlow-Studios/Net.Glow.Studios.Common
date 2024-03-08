@@ -15,7 +15,7 @@ public interface IBaseRepository<T> where T : BaseEntity
     ///     Create new records in database.
     /// </summary>
     /// <param name="entities">(Collection: <see cref="T" />)</param>
-    public IReadOnlyCollection<T> CreateMany(ICollection<T> entities);
+    public ICollection<T> CreateMany(ICollection<T> entities);
 
     /// <summary>
     ///     Update record in database.
