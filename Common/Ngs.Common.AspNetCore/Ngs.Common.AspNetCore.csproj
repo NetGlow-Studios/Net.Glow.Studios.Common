@@ -5,6 +5,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>12</LangVersion>
+        <Title>Ngs.Common.AspNetCore</Title>
+        <Authors>Net.Glow.Studios</Authors>
+        <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,4 +15,11 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="License.txt" Pack="true" PackagePath=""/>
+    </ItemGroup>
 </Project>

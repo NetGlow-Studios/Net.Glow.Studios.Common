@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using Ngs.Common.AspNetCore.DataSower.Exceptions;
 
 namespace Ngs.Common.AspNetCore.DataSower.Extensions;
@@ -19,7 +20,7 @@ public static class BuilderExtensions
     }
     
     /// <summary>
-    /// Uses data seeds to seed the database
+    /// Uses data seeds to seed the database. Use this method after AddDbContext
     /// </summary>
     /// <param name="services"> Service collection </param>
     /// <typeparam name="TSeed"> Seed type </typeparam>
@@ -79,6 +80,67 @@ public static class BuilderExtensions
         return services;
     }
     
+    /// <summary>
+    /// Uses data seeds to seed the MongoDB database. Use this method after AddMongoConnection
+    /// </summary>
+    /// <param name="services"> Service collection </param>
+    /// <param name="database"> Database name </param>
+    /// <param name="collectionName"> Collection name </param>
+    /// <typeparam name="TSeed"> Seed type </typeparam>
+    /// <returns> IServiceCollection </returns>
+    /// <exception cref="UniquePropException"> Unique properties are not defined in the seed. Define at least one unique property. </exception>
+    public static IServiceCollection UseDataSeedsForMongo<TSeed>(this IServiceCollection services, string database, string collectionName) where TSeed : class
+    {
+        var serviceProvider = services.BuildServiceProvider();
+        var dataSeedTypes = GetDerivedTypes<DataSeed<TSeed>>();
+            
+        foreach (var dataSeedType in dataSeedTypes)
+        {
+            var dataSeedInstance = (DataSeed<TSeed>)serviceProvider.GetRequiredService(dataSeedType);
+            dataSeedInstance.Seeder();
+
+            if (dataSeedInstance.UniqueProperties.Count == 0)
+            {
+                throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
+            }
+            
+            var mongoClient = serviceProvider.GetRequiredService<IMongoClient>();
+            var databaseInstance = mongoClient.GetDatabase(database);
+            var collection = databaseInstance.GetCollection<TSeed>(collectionName);
+            
+            var uniqueProperties = dataSeedInstance.UniqueProperties;
+            var newSeeds = dataSeedInstance.Seeds;
+            var existingSeeds = collection.Find(_ => true).ToList();
+
+            foreach (var newSeed in newSeeds)
+            {
+                var exists = false;
+                
+                foreach (var uniqueProperty in uniqueProperties)
+                {
+                    var newValue = newSeed.GetType().GetProperty(uniqueProperty)?.GetValue(newSeed, null);
+                    var existingSeed = existingSeeds.FirstOrDefault(existingSeed =>
+                    {
+                        var existingValue = existingSeed.GetType().GetProperty(uniqueProperty)?.GetValue(existingSeed, null);
+                        return Equals(existingValue, newValue);
+                    });
+
+                    if (existingSeed == null) continue;
+                    
+                    exists = true;
+                    break;
+                }
+
+                if (!exists)
+                {
+                    collection.InsertOne(newSeed);
+                }
+            }
+        }
+        
+        return services;
+    }
+
     private static IEnumerable<Type> GetDerivedTypes<TBase>()
     {
         return AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p 
