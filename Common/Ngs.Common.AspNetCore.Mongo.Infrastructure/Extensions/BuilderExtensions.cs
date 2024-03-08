@@ -1,5 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Extensions;
@@ -18,6 +21,9 @@ public static class BuilderExtensions
     {
         services.AddSingleton<IMongoClient>(new MongoClient(configurationManager.GetConnectionString(connectionStringKey)));
 
+        BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+        BsonSerializer.RegisterSerializer(new ReadOnlyCollectionSerializer<Guid>(new GuidSerializer(BsonType.String)));
+        
         return services;
     }
 }
