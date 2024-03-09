@@ -2,12 +2,12 @@ using System.Linq.Expressions;
 using MongoDB.Driver;
 using Ngs.Common.AspNetCore.Entities;
 using Ngs.Common.AspNetCore.Enums;
-using Ngs.Common.AspNetCore.Infrastructure.Exceptions;
+using Ngs.Common.AspNetCore.Mongo.Infrastructure.Exceptions;
 using Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
 namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories;
 
-public class BaseMongoRepositoryAsync<T>(IMongoDatabase database, string collectionName) : IBaseRepositoryAsync<T>, IBaseRepositoryReadOnlyAsync<T> where T : BaseEntity
+public class BaseMongoRepositoryAsync<T>(IMongoDatabase database, string collectionName) : IBaseRepositoryAsync<T> where T : BaseEntity
 {
     private readonly IMongoCollection<T> _collection = database.GetCollection<T>(collectionName);
     

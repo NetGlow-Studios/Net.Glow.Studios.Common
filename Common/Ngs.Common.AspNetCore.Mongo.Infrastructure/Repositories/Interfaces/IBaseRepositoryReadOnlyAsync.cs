@@ -1,9 +1,10 @@
 using System.Linq.Expressions;
+using Ngs.Common.AspNetCore.Entities;
 using Ngs.Common.AspNetCore.Enums;
 
 namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
-public interface IBaseRepositoryReadOnlyAsync<T> where T : class
+public interface IBaseRepositoryReadOnlyAsync<T> where T : BaseEntity
 {
     /// <summary>
     /// Get count of entities in database table asynchronously.

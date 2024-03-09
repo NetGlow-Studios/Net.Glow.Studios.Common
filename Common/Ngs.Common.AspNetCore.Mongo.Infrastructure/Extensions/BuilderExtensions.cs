@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
 namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Extensions;
 

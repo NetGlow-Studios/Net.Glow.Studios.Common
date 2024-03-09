@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
+using Ngs.Common.AspNetCore.Entities;
 
 namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
-public interface IBaseRepositoryAsync<T> : IBaseRepositoryReadOnlyAsync<T> where T : class
+public interface IBaseRepositoryAsync<T> : IBaseRepositoryReadOnlyAsync<T> where T : BaseEntity
 {
     /// <summary>
     ///     Create a new record in database asynchronously.

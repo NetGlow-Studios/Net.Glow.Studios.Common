@@ -1,6 +1,6 @@
 using Ngs.Common.AspNetCore.Exceptions;
 
-namespace Ngs.Common.AspNetCore.Infrastructure.Exceptions;
+namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Exceptions;
 /// <summary>
 /// Exception for when an entity is not found in the repository
 /// </summary>

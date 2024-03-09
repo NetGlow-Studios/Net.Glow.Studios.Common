@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using MongoDB.Driver;
 using Ngs.Common.AspNetCore.Entities;
 using Ngs.Common.AspNetCore.Enums;
-using Ngs.Common.AspNetCore.Infrastructure.Exceptions;
+using Ngs.Common.AspNetCore.Mongo.Infrastructure.Exceptions;
 using Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories.Interfaces;
 
 namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Repositories;

@@ -1,9 +1,11 @@
-namespace Ngs.Common.AspNetCore.Infrastructure.Exceptions;
+using Ngs.Common.AspNetCore.Exceptions;
+
+namespace Ngs.Common.AspNetCore.Mongo.Infrastructure.Exceptions;
 
 /// <summary>
 /// Thrown when entity was not created in repository
 /// </summary>
-public class EntityNotCreatedRepositoryException : Exception
+public class EntityNotCreatedRepositoryException : BaseException
 {
     public EntityNotCreatedRepositoryException()
     {
