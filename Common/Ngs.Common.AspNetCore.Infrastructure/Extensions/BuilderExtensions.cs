@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using Ngs.Common.AspNetCore.Infrastructure.Exceptions;
 using Ngs.Common.AspNetCore.Infrastructure.Repositories;
 using Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
 
@@ -53,7 +54,20 @@ public static class BuilderExtensions
         services.AddDbContext<TDbContext>(options
             => options.UseSqlServer(configurationManager.GetConnectionString(connectionStringKey), x
                 => x.MigrationsAssembly(migrationAssembly)));
-
+        
+        var serviceProvider = services.BuildServiceProvider();
+        var dbContext = serviceProvider.GetRequiredService<TDbContext>();
+        
+        try
+        {
+            dbContext.Database.OpenConnection();
+            dbContext.Database.CloseConnection();
+        }
+        catch (Exception e)
+        {
+            throw new ConnectionNotEstablishedException(string.Empty, e);
+        }
+        
         return services;
     }
     
@@ -79,6 +93,19 @@ public static class BuilderExtensions
         services.AddDbContext<TDbContext>(options
             => options.UseSqlite(configurationManager.GetConnectionString(connectionStringKey), x
                 => x.MigrationsAssembly(migrationAssembly)));
+        
+        var serviceProvider = services.BuildServiceProvider();
+        var dbContext = serviceProvider.GetRequiredService<TDbContext>();
+        
+        try
+        {
+            dbContext.Database.OpenConnection();
+            dbContext.Database.CloseConnection();
+        }
+        catch (Exception e)
+        {
+            throw new ConnectionNotEstablishedException(string.Empty, e);
+        }
 
         return services;
     }

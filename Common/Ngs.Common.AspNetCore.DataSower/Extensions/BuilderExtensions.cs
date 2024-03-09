@@ -32,6 +32,14 @@ public static class BuilderExtensions
         var serviceProvider = services.BuildServiceProvider();
         var dataSeedTypes = GetDerivedTypes<DataSeed<TSeed>>();
         
+        //check if there is any DbContext with TDbContext type registered
+        var dbContext = serviceProvider.GetService<TDbContext>();
+        
+        if (dbContext == null)
+        {
+            throw new Exception($"No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext.");
+        }
+        
         foreach (var dataSeedType in dataSeedTypes)
         {
             var dataSeedInstance = (DataSeed<TSeed>)serviceProvider.GetRequiredService(dataSeedType);
@@ -42,7 +50,6 @@ public static class BuilderExtensions
                 throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
             }
             
-            var dbContext = serviceProvider.GetRequiredService<TDbContext>();
             var dbSet = dbContext.Set<TSeed>();
             
             var uniqueProperties = dataSeedInstance.UniqueProperties;
