@@ -31,7 +31,7 @@ public static class BuilderExtensions
     {
         var serviceProvider = services.BuildServiceProvider();
         var dataSeedTypes = GetDerivedTypes<DataSeed<TSeed>>();
-            
+        
         foreach (var dataSeedType in dataSeedTypes)
         {
             var dataSeedInstance = (DataSeed<TSeed>)serviceProvider.GetRequiredService(dataSeedType);
@@ -141,9 +141,23 @@ public static class BuilderExtensions
         return services;
     }
 
-    private static IEnumerable<Type> GetDerivedTypes<TBase>()
+    private static List<Type> GetDerivedTypes<TBase>()
     {
-        return AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(p 
-            => typeof(TBase).IsAssignableFrom(p) && p is { IsClass: true, IsAbstract: false });
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        var types = new List<Type>();
+
+        foreach (var assembly in assemblies)
+        {
+            try
+            {
+                types.AddRange(assembly.GetTypes().Where(p => typeof(TBase).IsAssignableFrom(p) && p is { IsClass: true, IsAbstract: false }));
+            }
+            catch (System.Reflection.ReflectionTypeLoadException)
+            {
+                // Ignore
+            }
+        }
+        return types;
     }
 }
