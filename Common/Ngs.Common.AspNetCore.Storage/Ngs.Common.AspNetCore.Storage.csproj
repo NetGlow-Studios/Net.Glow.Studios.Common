@@ -17,4 +17,8 @@
       <Folder Include="Backup\Converters\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
+    </ItemGroup>
+
 </Project>

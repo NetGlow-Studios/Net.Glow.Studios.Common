@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Ngs.Common.AspNetCore.Entities;
@@ -6,6 +7,7 @@ using Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Repositories;
 
+[DebuggerStepThrough]
 public abstract class BaseRepositoryReadOnlyAsync<T>(DbContext applicationDbContext) : IBaseRepositoryReadOnlyAsync<T> where T : BaseEntity
 {
     private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();

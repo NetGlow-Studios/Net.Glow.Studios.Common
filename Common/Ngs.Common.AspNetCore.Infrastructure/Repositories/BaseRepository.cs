@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Ngs.Common.AspNetCore.Entities;
@@ -12,6 +13,7 @@ namespace Ngs.Common.AspNetCore.Infrastructure.Repositories;
 /// </summary>
 /// <param name="applicationDbContext"> The application db context </param>
 /// <typeparam name="T"> The entity type </typeparam>
+[DebuggerStepThrough]
 public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseRepository<T>, IBaseRepositoryReadOnly<T> where T : BaseEntity
 {
     private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();
