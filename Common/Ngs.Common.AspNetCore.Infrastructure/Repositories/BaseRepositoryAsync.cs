@@ -278,20 +278,24 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(predicate).Skip(page * pageSize).Take(pageSize).ToListAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         entity.UpdatedAt = DateTime.UtcNow;
 
         _dbSet.Update(entity);
         await applicationDbContext.SaveChangesAsync(cancellationToken);
+        
+        return entity;
     }
 
-    public async Task UpdateManyAsync(ICollection<T> entities, CancellationToken cancellationToken = default)
+    public async Task<ICollection<T>> UpdateManyAsync(ICollection<T> entities, CancellationToken cancellationToken = default)
     {
         entities.ToList().ForEach(x => x.UpdatedAt = DateTime.UtcNow);
 
         _dbSet.UpdateRange(entities);
         await applicationDbContext.SaveChangesAsync(cancellationToken);
+        
+        return entities;
     }
     
     public async Task UpdateStatusAsync(T entity, StatusEnum status, CancellationToken cancellationToken = default)

@@ -18,20 +18,20 @@ public interface IBaseRepositoryAsync<T> : IBaseRepositoryReadOnlyAsync<T> where
     /// <param name="cancellationToken"> (CancellationToken: <see cref="CancellationToken" />)</param>
     public Task<ICollection<T>> CreateManyAsync(ICollection<T> entities,
         CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     ///     Update record in database asynchronously.
     /// </summary>
     /// <param name="entity">Record to update.</param>
     /// <param name="cancellationToken"> (CancellationToken: <see cref="CancellationToken" />)</param>
-    public Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
-    
+    public Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
+
     /// <summary>
     ///     Update records in database asynchronously.
     /// </summary>
     /// <param name="entities">Records to update.</param>
     /// <param name="cancellationToken"> (CancellationToken: <see cref="CancellationToken" />)</param>
-    public Task UpdateManyAsync(ICollection<T> entities, CancellationToken cancellationToken = default);
+    public Task<ICollection<T>> UpdateManyAsync(ICollection<T> entities, CancellationToken cancellationToken = default);
     
     /// <summary>
     ///     Remove by change status to Delete asynchronously.
