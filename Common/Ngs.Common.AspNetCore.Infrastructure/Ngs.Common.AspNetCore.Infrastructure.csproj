@@ -4,6 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>12</LangVersion>
+        <Title>Ngs.Common.AspNetCore.Infrastructure</Title>
+        <Authors>Net.Glow.Studios</Authors>
+        <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +24,14 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="License.txt" Pack="true" PackagePath=""/>
     </ItemGroup>
 
 </Project>

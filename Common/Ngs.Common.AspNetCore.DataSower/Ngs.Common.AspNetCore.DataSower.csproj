@@ -4,6 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>12</LangVersion>
+        <Title>Ngs.Common.AspNetCore.DataSower</Title>
+        <Authors>Net.Glow.Studios</Authors>
+        <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,6 +15,14 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
       <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="License.txt" Pack="true" PackagePath=""/>
     </ItemGroup>
 
 </Project>

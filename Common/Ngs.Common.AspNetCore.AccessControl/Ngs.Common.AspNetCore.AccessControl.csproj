@@ -4,6 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>12</LangVersion>
+        <Title>Ngs.Common.AspNetCore.AccessControl</Title>
+        <Authors>Net.Glow.Studios</Authors>
+        <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,4 +21,11 @@
       <ProjectReference Include="..\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="License.txt" Pack="true" PackagePath=""/>
+    </ItemGroup>
 </Project>

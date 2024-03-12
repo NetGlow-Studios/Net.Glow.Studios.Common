@@ -119,7 +119,13 @@ public static class BuilderExtensions
                 throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
             }
             
-            var mongoClient = serviceProvider.GetRequiredService<IMongoClient>();
+            var mongoClient = serviceProvider.GetService<IMongoClient>();
+
+            if (mongoClient == null)
+            {
+                throw new Exception("No MongoClient is registered. Use AddMongoConnection method to register the MongoClient.");
+            }
+            
             var databaseInstance = mongoClient.GetDatabase(database);
             var collection = databaseInstance.GetCollection<TSeed>(collectionName);
             

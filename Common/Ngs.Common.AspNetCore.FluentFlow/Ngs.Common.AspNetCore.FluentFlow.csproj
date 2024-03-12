@@ -4,6 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>12</LangVersion>
+        <Title>Ngs.Common.AspNetCore.FluentFlow</Title>
+        <Authors>Net.Glow.Studios</Authors>
+        <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,10 +20,12 @@
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
+    </PropertyGroup>
+
     <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore.Mvc.ViewFeatures">
-        <HintPath>..\..\..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.0\Microsoft.AspNetCore.Mvc.ViewFeatures.dll</HintPath>
-      </Reference>
+        <None Include="License.txt" Pack="true" PackagePath=""/>
     </ItemGroup>
 
 </Project>
