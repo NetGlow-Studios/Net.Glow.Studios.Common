@@ -50,38 +50,46 @@ public static class BuilderExtensions
                 throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
             }
             
-            var dbSet = dbContext.Set<TSeed>();
-            
-            var uniqueProperties = dataSeedInstance.UniqueProperties;
-            var newSeeds = dataSeedInstance.Seeds;
-            var existingSeeds = dbSet.ToList();
-
-            foreach (var newSeed in newSeeds)
+            try
             {
-                var exists = false;
-                
-                foreach (var uniqueProperty in uniqueProperties)
+                var dbSet = dbContext.Set<TSeed>();
+
+                var uniqueProperties = dataSeedInstance.UniqueProperties;
+                var newSeeds = dataSeedInstance.Seeds;
+                var existingSeeds = dbSet.ToList();
+
+                foreach (var newSeed in newSeeds)
                 {
-                    var newValue = newSeed.GetType().GetProperty(uniqueProperty)?.GetValue(newSeed, null);
-                    var existingSeed = existingSeeds.FirstOrDefault(existingSeed =>
+                    var exists = false;
+
+                    foreach (var uniqueProperty in uniqueProperties)
                     {
-                        var existingValue = existingSeed.GetType().GetProperty(uniqueProperty)?.GetValue(existingSeed, null);
-                        return Equals(existingValue, newValue);
-                    });
+                        var newValue = newSeed.GetType().GetProperty(uniqueProperty)?.GetValue(newSeed, null);
+                        var existingSeed = existingSeeds.FirstOrDefault(existingSeed =>
+                        {
+                            var existingValue = existingSeed.GetType().GetProperty(uniqueProperty)
+                                ?.GetValue(existingSeed, null);
+                            return Equals(existingValue, newValue);
+                        });
 
-                    if (existingSeed == null) continue;
-                    
-                    exists = true;
-                    break;
+                        if (existingSeed == null) continue;
+
+                        exists = true;
+                        break;
+                    }
+
+                    if (!exists)
+                    {
+                        dbSet.Add(newSeed);
+                    }
                 }
 
-                if (!exists)
-                {
-                    dbSet.Add(newSeed);
-                }
+                dbContext.SaveChanges();
             }
-            
-            dbContext.SaveChanges();
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
         
         return services;
