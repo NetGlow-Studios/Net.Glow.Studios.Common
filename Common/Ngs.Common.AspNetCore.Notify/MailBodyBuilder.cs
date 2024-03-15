@@ -1,6 +1,6 @@
 using HtmlAgilityPack;
 
-namespace Ngs.Common.Notify;
+namespace Ngs.Common.AspNetCore.Notify;
 
 /// <summary>
 /// A class to build the body of an email.

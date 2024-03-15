@@ -1,6 +1,6 @@
 using System.Net.Mail;
 
-namespace Ngs.Common.Notify.Models;
+namespace Ngs.Common.AspNetCore.Notify.Models;
 
 /// <summary>
 /// Mail model

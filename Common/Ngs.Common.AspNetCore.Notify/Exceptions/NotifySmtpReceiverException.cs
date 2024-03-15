@@ -1,6 +1,6 @@
 using Ngs.Common.AspNetCore.Exceptions;
 
-namespace Ngs.Common.Notify.Exceptions;
+namespace Ngs.Common.AspNetCore.Notify.Exceptions;
 
 /// <summary>
 /// Exception thrown when there is an error in the NotifySmtpReceiver.

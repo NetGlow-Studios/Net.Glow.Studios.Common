@@ -1,7 +1,7 @@
-using Ngs.Common.Notify.Models;
+using Ngs.Common.AspNetCore.Notify.Models;
 using RestSharp;
 
-namespace Ngs.Common.Notify;
+namespace Ngs.Common.AspNetCore.Notify;
 
 /// <summary>
 /// Service for sending SMS messages

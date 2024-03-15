@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Mail;
-using Ngs.Common.Notify.Exceptions;
-using Ngs.Common.Notify.Models;
+using Ngs.Common.AspNetCore.Notify.Exceptions;
+using Ngs.Common.AspNetCore.Notify.Models;
 
-namespace Ngs.Common.Notify;
+namespace Ngs.Common.AspNetCore.Notify;
 
 /// <summary>
 /// Service for sending emails

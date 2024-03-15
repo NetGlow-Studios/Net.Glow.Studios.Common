@@ -8,5 +8,5 @@ namespace Ngs.Common.AspNetCore.AccessControl.Attributes;
 /// Attribute to check if the user has the privilege to access the action (endpoint).
 /// </summary>
 /// <typeparam name="TIPrivilege">Service with database instance to return condition if user has privilege.</typeparam>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
 public abstract class HasPrivilegeAttribute<TIPrivilege>() : TypeFilterAttribute(typeof(AccessControlFilter<TIPrivilege>)) where TIPrivilege : IPrivilege;

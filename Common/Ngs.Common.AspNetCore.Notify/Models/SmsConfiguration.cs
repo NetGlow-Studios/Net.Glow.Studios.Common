@@ -1,4 +1,4 @@
-namespace Ngs.Common.Notify.Models;
+namespace Ngs.Common.AspNetCore.Notify.Models;
 
 /// <summary>
 /// Configuration for sending SMS messages.
