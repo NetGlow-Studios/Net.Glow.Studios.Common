@@ -8,6 +8,7 @@
         <Title>Ngs.Common.AspNetCore.AccessControl</Title>
         <Authors>Net.Glow.Studios</Authors>
         <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>

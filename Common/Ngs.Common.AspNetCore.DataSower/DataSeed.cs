@@ -1,10 +1,12 @@
+using Ngs.Common.AspNetCore.DataSower.Interfaces;
+
 namespace Ngs.Common.AspNetCore.DataSower;
 
 /// <summary>
 /// DataSeed is a class that is used to seed data into the database.
 /// </summary>
 /// <typeparam name="TSeed"> Seed type </typeparam>
-public abstract class DataSeed<TSeed> where TSeed : class
+public abstract class DataSeed<TSeed> : IDataSeed where TSeed : class
 {
     /// <summary>
     /// Seeds to be added to the database. If the seed already exists in the database, it will be ignored.
