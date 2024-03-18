@@ -11,10 +11,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="libphonenumber-csharp" Version="8.13.31" />
+      <PackageReference Include="libphonenumber-csharp" Version="8.13.32" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.3" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
     </ItemGroup>
 
