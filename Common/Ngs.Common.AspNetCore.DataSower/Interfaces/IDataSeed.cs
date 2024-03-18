@@ -1,3 +1,5 @@
+using Ngs.Common.AspNetCore.Entities;
+
 namespace Ngs.Common.AspNetCore.DataSower.Interfaces;
 
 /// <summary>
@@ -14,4 +16,6 @@ public interface IDataSeed
     /// Seeds the data to the database. Do not call this method directly. Use UseDataSeeds extension method instead!
     /// </summary>
     public void Seeder();
+    
+    public ICollection<BaseEntity> GetSeeds();
 }

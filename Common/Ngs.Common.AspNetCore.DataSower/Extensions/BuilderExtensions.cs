@@ -16,12 +16,13 @@ public static class BuilderExtensions
     /// <param name="services"> Service collection </param>
     /// <typeparam name="TDataSeed"> Data seed type </typeparam>
     /// <returns> IServiceCollection </returns>
-    public static IServiceCollection AddDataSeed<TDataSeed>(this IServiceCollection services) where TDataSeed : IDataSeed
+    public static IServiceCollection AddDataSeed<TDataSeed>(this IServiceCollection services)
+        where TDataSeed : IDataSeed
     {
         services.AddSingleton(typeof(TDataSeed));
         return services;
     }
-    
+
     /// <summary>
     /// Adds prepared seeds to the database. Then removes the seeds from the service collection.
     /// Be careful, it's expensive! If more than one seed needs to be added use AddDataSeed method for each seed and then use UseDataSeeds method.
@@ -33,7 +34,55 @@ public static class BuilderExtensions
     public static IServiceCollection AddDataSeed<TDataSeed, TDbContext>(this IServiceCollection services) where TDataSeed : IDataSeed where TDbContext : DbContext
     {
         services.AddSingleton(typeof(TDataSeed));
-        services.UseDataSeeds<TDbContext>();
+
+        var serviceProvider = services.BuildServiceProvider();
+        var dbContext = serviceProvider.GetService<TDbContext>();
+
+        if (dbContext == null)
+        {
+            throw new NotExistedDbContextException($"No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext.");
+        }
+
+        var seedInstance = serviceProvider.GetRequiredService<TDataSeed>();
+        seedInstance.Seeder();
+
+        var newSeeds = seedInstance.GetSeeds();
+        
+        if (seedInstance.UniqueProperties.Count == 0)
+        {
+            throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
+        }
+        
+        if (newSeeds.Count == 0) return services;
+        
+        var setMethod = dbContext.GetType()
+            .GetMethods().First(method => method is { Name: "Set", IsGenericMethod: true })
+            .MakeGenericMethod(seedInstance.GetType().BaseType!.GetGenericArguments()[0]).Invoke(dbContext, null)!;
+        
+        var existingSeeds = ((IEnumerable)setMethod).Cast<BaseEntity>().ToList();
+        
+        foreach (var newSeed in newSeeds)
+        {
+            var exists = existingSeeds.Any(existingSeed =>
+            {
+                foreach (var uniqueProperty in seedInstance.UniqueProperties)
+                {
+                    var newValue = newSeed.GetType().GetProperty(uniqueProperty)?.GetValue(newSeed);
+                    var existingValue = existingSeed.GetType().GetProperty(uniqueProperty)?.GetValue(existingSeed);
+        
+                    if (!Equals(newValue, existingValue)) return false;
+                }
+        
+                return true;
+            });
+        
+            if (!exists) dbContext.Add(newSeed);
+        }
+        
+        dbContext.SaveChanges();
+
+        services.Remove(new ServiceDescriptor(typeof(TDataSeed), seedInstance));
+
         return services;
     }
 
@@ -45,15 +94,17 @@ public static class BuilderExtensions
     /// <returns> IServiceCollection </returns>
     /// <exception cref="Exception"> No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext. </exception>
     /// <exception cref="UniquePropException"> Unique properties are not defined in the seed. Define at least one unique property. </exception>
-    public static IServiceCollection UseDataSeeds<TDbContext>(this IServiceCollection services) where TDbContext : DbContext
+    public static IServiceCollection UseDataSeeds<TDbContext>(this IServiceCollection services)
+        where TDbContext : DbContext
     {
         var serviceProvider = services.BuildServiceProvider();
-        
+
         var dbContext = serviceProvider.GetService<TDbContext>();
 
         if (dbContext == null)
         {
-            throw new NotExistedDbContextException($"No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext.");
+            throw new NotExistedDbContextException(
+                $"No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext.");
         }
 
         // Get all data seeds from the DI container
@@ -65,28 +116,32 @@ public static class BuilderExtensions
         }).ToList();
 
         // For each data seed, get the instance and call the Seeder method
-        foreach (IDataSeed seedInstance in dataSeeds.Select(dataSeed => serviceProvider.GetRequiredService(dataSeed.ServiceType)))
+        foreach (IDataSeed seedInstance in dataSeeds.Select(dataSeed =>
+                     serviceProvider.GetRequiredService(dataSeed.ServiceType)))
         {
             // Call the Seeder method to prepare the seeds.
             seedInstance.Seeder();
-            
+
             // Check if the unique properties are defined in the seed.
             if (seedInstance.UniqueProperties.Count == 0)
             {
-                throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
+                throw new UniquePropException(
+                    "Unique properties are not defined in the seed. Define at least one unique property.");
             }
-            
+
             // Get prepared seeds as Collection.
-            if (seedInstance.GetType().GetProperty("Seeds")?.GetValue(seedInstance)! is not ICollection newSeeds || newSeeds.Count == 0) continue;
-            
+            var newSeeds = seedInstance.GetSeeds();
+
+            if (newSeeds.Count == 0) continue;
+
             //Prepare a dbSet for the database context to get instances of the data with entity type.
             var setMethod = dbContext.GetType()
                 .GetMethods().First(method => method is { Name: "Set", IsGenericMethod: true })
                 .MakeGenericMethod(seedInstance.GetType().BaseType!.GetGenericArguments()[0]).Invoke(dbContext, null)!;
-            
+
             // Get all existing seeds from the database.
             var existingSeeds = ((IEnumerable)setMethod).Cast<BaseEntity>().ToList();
-            
+
             foreach (var newSeed in newSeeds)
             {
                 // Check if the new seed exists in the database by comparing the unique properties specified in the seed.
@@ -99,6 +154,7 @@ public static class BuilderExtensions
 
                         if (!Equals(newValue, existingValue)) return false;
                     }
+
                     return true;
                 });
 
@@ -106,16 +162,16 @@ public static class BuilderExtensions
                 if (!exists) dbContext.Add(newSeed);
             }
         }
+
+        // Save the changes to the database.
+        dbContext.SaveChanges();
         
         // Remove the seeds from the service collection to prevent using them again.
         dataSeeds.ForEach(dataSeed => services.Remove(dataSeed));
-        
-        // Save the changes to the database.
-        dbContext.SaveChanges();
 
         return services;
     }
-    
+
     /// <summary>
     /// Adds data seed to the service collection
     /// </summary>
@@ -133,7 +189,8 @@ public static class BuilderExtensions
 
         if (mongoClient == null)
         {
-            throw new Exception("No MongoClient is registered. Use AddMongoConnection method to register the MongoClient.");
+            throw new Exception(
+                "No MongoClient is registered. Use AddMongoConnection method to register the MongoClient.");
         }
 
         var databaseInstance = mongoClient.GetDatabase(database);
@@ -146,17 +203,21 @@ public static class BuilderExtensions
                    s.ServiceType.BaseType.GetGenericTypeDefinition() == typeof(DataSeed<>);
         }).ToList();
 
-        foreach (var seedInstance in dataSeeds.Select(dataSeed => serviceProvider.GetRequiredService(dataSeed.ServiceType)))
+        foreach (var seedInstance in dataSeeds.Select(dataSeed =>
+                     serviceProvider.GetRequiredService(dataSeed.ServiceType)))
         {
             seedInstance.GetType().GetMethod(nameof(DataSeed<BaseEntity>.Seeder))?.Invoke(seedInstance, null);
 
-            var uniqueProperties = seedInstance.GetType().GetProperty("UniqueProperties")?.GetValue(seedInstance)! as ICollection<string>;
+            var uniqueProperties =
+                seedInstance.GetType().GetProperty("UniqueProperties")?.GetValue(seedInstance)! as ICollection<string>;
 
-            if (seedInstance.GetType().GetProperty("Seeds")?.GetValue(seedInstance)! is not ICollection newSeeds || newSeeds.Count == 0) continue;
+            if (seedInstance.GetType().GetProperty("Seeds")?.GetValue(seedInstance)! is not ICollection newSeeds ||
+                newSeeds.Count == 0) continue;
 
             if (uniqueProperties == null || uniqueProperties.Count == 0)
             {
-                throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
+                throw new UniquePropException(
+                    "Unique properties are not defined in the seed. Define at least one unique property.");
             }
 
             var existingSeeds = collection.Find(_ => true).ToList();
@@ -175,6 +236,7 @@ public static class BuilderExtensions
                             return false;
                         }
                     }
+
                     return true;
                 });
 
@@ -184,9 +246,9 @@ public static class BuilderExtensions
                 }
             }
         }
-        
+
         dataSeeds.ForEach(dataSeed => services.Remove(dataSeed));
-        
+
         return services;
     }
 }

@@ -1,6 +1,7 @@
-using Ngs.Common.Notify.Models;
+using Ngs.Common.AspNetCore.Notify;
+using Ngs.Common.AspNetCore.Notify.Models;
 
-namespace Ngs.Common.Notify.Tests;
+namespace Ngs.Common.AspNetCore.Notify.Tests;
 
 public class MailServiceTest
 {
