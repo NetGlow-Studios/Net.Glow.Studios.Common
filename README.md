@@ -12,6 +12,8 @@ This package provides base types for common application elements such as entitie
 
 Enables access control and privilege management for actions and controllers within your ASP.NET Core application.
 
+- **Usage Example**: https://github.com/NetGlow-Studios/Net.Glow.Studios.Common/tree/main/Examples/Ngs.Common.AspNetCore.AccessControl.Example
+
 ### Ngs.Common.AspNetCore.DataSower
 
 Facilitates seeding of data into the database upon application startup.

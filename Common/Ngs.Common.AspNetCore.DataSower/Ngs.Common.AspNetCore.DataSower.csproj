@@ -8,6 +8,8 @@
         <Title>Ngs.Common.AspNetCore.DataSower</Title>
         <Authors>Net.Glow.Studios</Authors>
         <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +22,14 @@
     <PropertyGroup>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Content Include="Readme.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
 
     <ItemGroup>
         <None Include="License.txt" Pack="true" PackagePath=""/>
