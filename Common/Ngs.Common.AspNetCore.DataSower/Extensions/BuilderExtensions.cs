@@ -181,74 +181,64 @@ public static class BuilderExtensions
     /// <returns> IServiceCollection </returns>
     /// <exception cref="UniquePropException"> Unique properties are not defined in the seed. Define at least one unique property. </exception>
     /// <exception cref="Exception"> No MongoClient is registered. Use AddMongoConnection method to register the MongoClient. </exception>
-    public static IServiceCollection UseDataSeedsForMongo(this IServiceCollection services,
-        string database, string collectionName)
+    public static IServiceCollection UseDataSeedsForMongo(this IServiceCollection services, string database, string collectionName)
     {
         var serviceProvider = services.BuildServiceProvider();
+        
         var mongoClient = serviceProvider.GetService<IMongoClient>();
-
+        
         if (mongoClient == null)
         {
-            throw new Exception(
-                "No MongoClient is registered. Use AddMongoConnection method to register the MongoClient.");
+            throw new Exception("No MongoClient is registered. Use AddMongoConnection method to register the MongoClient.");
         }
-
+        
         var databaseInstance = mongoClient.GetDatabase(database);
-        var collection = databaseInstance.GetCollection<BaseEntity>(collectionName);
-
+        
         var dataSeeds = services.Where(s =>
         {
             if (s.ServiceType.BaseType == null) return false;
             return s.ServiceType.BaseType.IsGenericType &&
                    s.ServiceType.BaseType.GetGenericTypeDefinition() == typeof(DataSeed<>);
         }).ToList();
-
-        foreach (var seedInstance in dataSeeds.Select(dataSeed =>
-                     serviceProvider.GetRequiredService(dataSeed.ServiceType)))
+        
+        foreach (IDataSeed seedInstance in dataSeeds.Select(dataSeed => serviceProvider.GetRequiredService(dataSeed.ServiceType)))
         {
-            seedInstance.GetType().GetMethod(nameof(DataSeed<BaseEntity>.Seeder))?.Invoke(seedInstance, null);
-
-            var uniqueProperties =
-                seedInstance.GetType().GetProperty("UniqueProperties")?.GetValue(seedInstance)! as ICollection<string>;
-
-            if (seedInstance.GetType().GetProperty("Seeds")?.GetValue(seedInstance)! is not ICollection newSeeds ||
-                newSeeds.Count == 0) continue;
-
-            if (uniqueProperties == null || uniqueProperties.Count == 0)
+            seedInstance.Seeder();
+        
+            if (seedInstance.UniqueProperties.Count == 0)
             {
-                throw new UniquePropException(
-                    "Unique properties are not defined in the seed. Define at least one unique property.");
+                throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
             }
-
+        
+            var newSeeds = seedInstance.GetSeeds();
+        
+            if (newSeeds.Count == 0) continue;
+        
+            var collection = databaseInstance.GetCollection<BaseEntity>(collectionName);
+        
             var existingSeeds = collection.Find(_ => true).ToList();
-
+        
             foreach (var newSeed in newSeeds)
             {
                 var exists = existingSeeds.Any(existingSeed =>
                 {
-                    foreach (var uniqueProperty in uniqueProperties)
+                    foreach (var uniqueProperty in seedInstance.UniqueProperties)
                     {
                         var newValue = newSeed.GetType().GetProperty(uniqueProperty)?.GetValue(newSeed);
                         var existingValue = existingSeed.GetType().GetProperty(uniqueProperty)?.GetValue(existingSeed);
-
-                        if (!Equals(newValue, existingValue))
-                        {
-                            return false;
-                        }
+        
+                        if (!Equals(newValue, existingValue)) return false;
                     }
-
+        
                     return true;
                 });
-
-                if (!exists)
-                {
-                    collection.InsertOne((newSeed as BaseEntity)!);
-                }
+        
+                if (!exists) collection.InsertOne(newSeed);
             }
         }
-
+        
         dataSeeds.ForEach(dataSeed => services.Remove(dataSeed));
-
+        
         return services;
     }
 }
