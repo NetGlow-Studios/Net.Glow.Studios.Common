@@ -28,6 +28,8 @@ Simplifies communication between the client-side and server-side by facilitating
 
 Offers extensive tools for creating database infrastructure, including entity configuration, repositories (including readonly and asynchronous), and support for MS SQL and SQLite.
 
+- **Usage Example**: https://github.com/NetGlow-Studios/Net.Glow.Studios.Common/tree/main/Examples/Ngs.Common.AspNetCore.Infrastructure.Example
+
 ### Ngs.Common.AspNetCore.Mongo.Infrastructure
 
 Similar to the previous package but tailored for MongoDB.

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\Ngs.Common.AspNetCore.Infrastructure\Ngs.Common.AspNetCore.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Common\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
+    </ItemGroup>
+
+</Project>

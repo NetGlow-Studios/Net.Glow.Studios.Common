@@ -21,4 +21,19 @@ public static class EntityBuilderExtensions
 
         return propertyBuilder;
     }
+    
+    public static PropertyBuilder<ICollection<T>> HasCollectionConversion<T>(this PropertyBuilder<ICollection<T>> propertyBuilder, SeparatorCharEnum separator = SeparatorCharEnum.Comma)
+    {
+        propertyBuilder
+            .HasColumnType("varchar(max)")
+            .HasConversion(
+                v => string.Join((char)separator, v),
+                v => v.Split((char)separator, StringSplitOptions.RemoveEmptyEntries).Select(x => (T)Convert.ChangeType(x, typeof(T))).ToList())
+            .Metadata.SetValueComparer(new ValueComparer<ICollection<T>>(
+                (c1, c2) => c2 != null && c1 != null && c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v!.GetHashCode())),
+                c => c.ToList()));
+
+        return propertyBuilder;
+    }
 }
