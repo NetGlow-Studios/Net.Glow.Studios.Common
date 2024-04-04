@@ -130,8 +130,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         return await query.Where(x => x.Status != status).ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
+    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
         includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         
@@ -140,7 +139,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
                 _dbSet, (current, includeProperty) =>
                     current.Include(includeProperty!));
 
-        return await query.Where(x => x.Status == status).Take(n).ToListAsync(cancellationToken);
+        return await query.Where(x => x.Status == status).OrderBy(x=>x.Id).Take(n).ToListAsync(cancellationToken);
     }
 
     public async Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids,

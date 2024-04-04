@@ -143,8 +143,6 @@ public static class ColorConverter
         var t = v * (1 - (1 - f) * saturation);
 
         var red = Convert.ToInt32(v);
-        var green = Convert.ToInt32(t);
-        var blue = Convert.ToInt32(p);
 
         return hi switch
         {

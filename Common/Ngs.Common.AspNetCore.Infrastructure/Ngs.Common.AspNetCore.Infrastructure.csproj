@@ -8,6 +8,8 @@
         <Title>Ngs.Common.AspNetCore.Infrastructure</Title>
         <Authors>Net.Glow.Studios</Authors>
         <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
