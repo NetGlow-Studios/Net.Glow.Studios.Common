@@ -1,27 +1,26 @@
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Ngs.Common.AspNetCore.Storage.Models;
 
 namespace Ngs.Common.AspNetCore.Storage.Extensions;
 
 public static class BuilderExtensions
 {
-    public static IApplicationBuilder UseContentFileProvider(this IApplicationBuilder applicationBuilder, string path, string requestPath, HtmlDirectoryFormatter? formatter = default)
+    /// <summary>
+    /// Add storage to the application
+    /// </summary>
+    /// <param name="services"> Service collection </param>
+    /// <param name="rootPath"> Root path of the storage. This path will be used as a root for all storage operations </param>
+    /// <returns> Service collection </returns>
+    public static IServiceCollection AddStorage(this IServiceCollection services, string rootPath)
     {
-        applicationBuilder.UseDirectoryBrowser(new DirectoryBrowserOptions
-        {
-            FileProvider = new PhysicalFileProvider(path),
-            RequestPath = requestPath,
-            Formatter = formatter ?? new HtmlDirectoryFormatter(HtmlEncoder.Default)
-        });
-
-        return applicationBuilder;
-    }
-    
-    public static IApplicationBuilder UseContentFileProvider(this IApplicationBuilder applicationBuilder, DirectoryBrowserOptions directoryBrowserOptions)
-    {
-        applicationBuilder.UseDirectoryBrowser(directoryBrowserOptions);
-        return applicationBuilder;
+        services.AddSingleton<IFileProvider>(new PhysicalFileProvider(rootPath));
+        services.AddSingleton(new FileExtensionContentTypeProvider());
+        
+        var root = new StorageRoot(rootPath);
+        services.AddSingleton(root);
+        
+        return services;
     }
 }

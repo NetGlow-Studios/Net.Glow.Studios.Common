@@ -2,6 +2,9 @@ using Ngs.Common.AspNetCore.Exceptions;
 
 namespace Ngs.Common.AspNetCore.Storage.Exceptions;
 
+/// <summary>
+/// Exception thrown when an error occurs during the restoration of a backup.
+/// </summary>
 public class RestoreBackupException : BaseException
 {
     public RestoreBackupException()

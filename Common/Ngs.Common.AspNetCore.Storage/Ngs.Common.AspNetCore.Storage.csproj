@@ -8,13 +8,10 @@
 
     <ItemGroup>
       <PackageReference Include="MessagePack" Version="2.5.140" />
+      <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="6.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Backup\Converters\" />
     </ItemGroup>
 
     <ItemGroup>
