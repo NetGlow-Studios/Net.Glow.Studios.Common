@@ -47,4 +47,12 @@ public class UnitTest1
         
         file.Rename("a.txt");
     }
+
+    [Fact]
+    public void T()
+    {
+        var file = Root.GetChildren().First(x => x.Name.Equals("futuristic city 0.png", StringComparison.CurrentCultureIgnoreCase)).Cast<StorageImageFile>();
+
+        file.Converter.ToSvg();
+    }
 }

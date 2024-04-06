@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Ngs.Common.AspNetCore\Ngs.Common.AspNetCore.csproj" />
+      <ProjectReference Include="..\Ngs.Common.Tools.Image\Ngs.Common.Tools.Image.csproj" />
     </ItemGroup>
 
 </Project>

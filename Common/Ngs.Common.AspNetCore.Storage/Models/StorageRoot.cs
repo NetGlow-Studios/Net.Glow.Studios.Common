@@ -52,7 +52,7 @@ public class StorageRoot : StorageItem
         
         foreach (var file in directoryInfo.GetFiles())
         {
-            var fileModel = new StorageFile(file, this);
+            var fileModel = StorageFile.NewFileInstance(file, this);
             
             Children.Add(fileModel);
         }

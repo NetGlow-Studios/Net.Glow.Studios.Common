@@ -9,32 +9,32 @@ public class StorageFile : StorageItem
     /// <summary>
     /// File Creation Date
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt => GetInfo().CreationTime;
 
     /// <summary>
     /// File Modification Date
     /// </summary>
-    public DateTime ModifiedAt { get; set; }
+    public DateTime ModifiedAt => GetInfo().LastWriteTime;
 
     /// <summary>
     /// Parent of the file.
     /// </summary>
-    public StorageItem Parent { get; set; }
+    public StorageItem Parent { get; private set; }
 
     /// <summary>
     /// File Extension
     /// </summary>
-    public string Extension { get; set; }
+    public string Extension => GetInfo().Extension;
     
     /// <summary>
     /// File Content Type
     /// </summary>
-    public string ContentType { get; set; }
+    public string ContentType { get; protected set; } = "application/octet-stream";
     
     /// <summary>
     /// File Size
     /// </summary>
-    public long Size { get; set; }
+    public long Size => GetInfo().Length;
     
     /// <summary>
     /// Compressor instance for the file.
@@ -46,12 +46,6 @@ public class StorageFile : StorageItem
         Name = file.Name;
         Path = file.FullName;
         Parent = parent;
-
-        Extension = file.Extension;
-        Size = file.Length;
-        ModifiedAt = file.LastWriteTime;
-        CreatedAt = file.CreationTime;
-        ContentType = "application/octet-stream";
     }
     
     /// <summary>
@@ -78,6 +72,25 @@ public class StorageFile : StorageItem
     }
     
     /// <summary>
+    /// Change the extension of the file.
+    /// </summary>
+    /// <param name="extension"> New extension of the file. </param>
+    /// <returns> The file. </returns>
+    public StorageFile ChangeExtension(string extension)
+    {
+        extension = extension.Replace(".", "");
+        
+        var splitPath = Path.Split('.');
+        var newPath = Path.Replace(splitPath[^1], extension);
+        
+        GetInfo().MoveTo(newPath);
+        
+        Path = Path.Replace(splitPath[^1], extension);
+        
+        return this;
+    }
+    
+    /// <summary>
     /// Get the content of the file as a FormFile.
     /// </summary>
     /// <returns> The content of the file as a FormFile. </returns>
@@ -93,6 +106,15 @@ public class StorageFile : StorageItem
     public byte[] ConvertToBytes()
     {
         return File.ReadAllBytes(Path);
+    }
+    
+    /// <summary>
+    /// Get the content of the file as a byte array.
+    /// </summary>
+    /// <returns> The content of the file as a byte array. </returns>
+    public async Task<byte[]> ConvertToBytesAsync()
+    {
+        return await File.ReadAllBytesAsync(Path);
     }
     
     /// <summary>
@@ -217,5 +239,28 @@ public class StorageFile : StorageItem
         root.IncludeFile(fileInfo);
         
         return new StorageFile(fileInfo, root);
+    }
+    
+    public static StorageFile NewFileInstance(FileInfo file, StorageItem parent)
+    {
+        var fileModel = file.Extension switch
+        {
+            ".json" => new StorageJsonFile(file, parent),
+            ".txt" => new StorageTextFile(file, parent),
+            ".jpg" => new StorageImageFile(file, parent),
+            ".jpeg" => new StorageImageFile(file, parent),
+            ".png" => new StorageImageFile(file, parent),
+            ".gif" => new StorageImageFile(file, parent),
+            ".bmp" => new StorageImageFile(file, parent),
+            ".heic" => new StorageImageFile(file, parent),
+            ".heif" => new StorageImageFile(file, parent),
+            ".webp" => new StorageImageFile(file, parent),
+            ".svg" => new StorageImageFile(file, parent),
+            ".ico" => new StorageImageFile(file, parent),
+            ".avif" => new StorageImageFile(file, parent),
+            _ => new StorageFile(file, parent)
+        };
+        
+        return fileModel;
     }
 }

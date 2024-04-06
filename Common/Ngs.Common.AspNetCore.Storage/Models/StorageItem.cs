@@ -151,4 +151,11 @@ public abstract class StorageItem
             storageItem = storageItem.GetParent();
         }
     }
+    
+    public TStorageItem Cast<TStorageItem>() where TStorageItem : StorageItem
+    {
+        var item = (TStorageItem)this!;
+        
+        return item;
+    }
 }

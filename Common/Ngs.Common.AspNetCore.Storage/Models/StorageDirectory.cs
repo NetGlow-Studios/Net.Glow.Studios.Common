@@ -1,5 +1,3 @@
-using System.IO.Compression;
-using Ngs.Common.AspNetCore.Storage.Backup;
 using Ngs.Common.AspNetCore.Storage.Compression;
 using Ngs.Common.AspNetCore.Storage.Enums;
 using Ngs.Common.AspNetCore.Storage.Exceptions;
@@ -39,7 +37,7 @@ public class StorageDirectory : StorageItem
 
         foreach (var file in directory.GetFiles())
         {
-            var fileModel = new StorageFile(file, this);
+            var fileModel = StorageFile.NewFileInstance(file, parent);
 
             Children.Add(fileModel);
         }
