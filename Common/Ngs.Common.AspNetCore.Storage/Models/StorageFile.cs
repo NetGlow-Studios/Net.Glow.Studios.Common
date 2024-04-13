@@ -41,10 +41,11 @@ public class StorageFile : StorageItem
     /// </summary>
     public FileCompressor Compressor => new(this);
 
-    public StorageFile(FileInfo file, StorageItem parent)
+    public StorageFile(FileSystemInfo file, StorageItem parent)
     {
         Name = file.Name;
-        Path = file.FullName;
+        Path = string.Concat(parent.Path, System.IO.Path.DirectorySeparatorChar, file.Name);
+        FullPath = file.FullName;
         Parent = parent;
     }
     

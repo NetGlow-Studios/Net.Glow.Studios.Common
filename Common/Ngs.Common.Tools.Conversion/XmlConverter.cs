@@ -18,7 +18,7 @@ public static class XmlConverter
     /// <exception cref="ArgumentNullException"> Value cannot be null. </exception>
     public static IEnumerable<byte> Serialize(object value)
     {
-        if (value == null)
+        if (value is null)
         {
             throw new ArgumentNullException(nameof(value), "Value cannot be null.");
         }
@@ -74,7 +74,7 @@ public static class XmlConverter
     {
         var source = JsonConverter.Deserialize<TSource>(jsonString);
 
-        if (source == null)
+        if (source is null)
         {
             throw new NoNullAllowedException("Source can not be null!");
         }
@@ -93,7 +93,7 @@ public static class XmlConverter
     {
         var source = CsvConverter.Deserialize<TSource>(csvString);
 
-        if (source == null)
+        if (source is null)
         {
             throw new NoNullAllowedException("Source can not be null!");
         }

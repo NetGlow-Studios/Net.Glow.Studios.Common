@@ -357,7 +357,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     {
         var entity = GetById(id);
 
-        if (entity == null) return;
+        if (entity is null) return;
         
         entity.Status = StatusEnum.Deleted;
 
@@ -403,7 +403,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     {
         var entity = GetById(id);
 
-        if (entity == null) return;
+        if (entity is null) return;
 
         _dbSet.Remove(entity);
         applicationDbContext.SaveChanges();

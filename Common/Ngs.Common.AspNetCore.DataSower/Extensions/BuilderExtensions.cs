@@ -38,7 +38,7 @@ public static class BuilderExtensions
         var serviceProvider = services.BuildServiceProvider();
         var dbContext = serviceProvider.GetService<TDbContext>();
 
-        if (dbContext == null)
+        if (dbContext is null)
         {
             throw new NotExistedDbContextException($"No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext.");
         }
@@ -101,7 +101,7 @@ public static class BuilderExtensions
 
         var dbContext = serviceProvider.GetService<TDbContext>();
 
-        if (dbContext == null)
+        if (dbContext is null)
         {
             throw new NotExistedDbContextException(
                 $"No DbContext with type {typeof(TDbContext)} is registered. Use AddDbContext method to register the DbContext.");
@@ -110,7 +110,7 @@ public static class BuilderExtensions
         // Get all data seeds from the DI container
         var dataSeeds = services.Where(s =>
         {
-            if (s.ServiceType.BaseType == null) return false;
+            if (s.ServiceType.BaseType is null) return false;
             return s.ServiceType.BaseType.IsGenericType &&
                    s.ServiceType.BaseType.GetGenericTypeDefinition() == typeof(DataSeed<>);
         }).ToList();
@@ -187,7 +187,7 @@ public static class BuilderExtensions
         
         var mongoClient = serviceProvider.GetService<IMongoClient>();
         
-        if (mongoClient == null)
+        if (mongoClient is null)
         {
             throw new Exception("No MongoClient is registered. Use AddMongoConnection method to register the MongoClient.");
         }
@@ -196,7 +196,7 @@ public static class BuilderExtensions
         
         var dataSeeds = services.Where(s =>
         {
-            if (s.ServiceType.BaseType == null) return false;
+            if (s.ServiceType.BaseType is null) return false;
             return s.ServiceType.BaseType.IsGenericType &&
                    s.ServiceType.BaseType.GetGenericTypeDefinition() == typeof(DataSeed<>);
         }).ToList();

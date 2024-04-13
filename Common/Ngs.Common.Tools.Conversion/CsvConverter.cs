@@ -108,7 +108,7 @@ public static class CsvConverter
     {
         var source = JsonConverter.Deserialize<TSource>(jsonString);
 
-        if (source == null)
+        if (source is null)
         {
             throw new NoNullAllowedException("Source can not be null!");
         }
@@ -120,7 +120,7 @@ public static class CsvConverter
     {
         var source = XmlConverter.Deserialize<TSource>(bytes);
 
-        if (source == null)
+        if (source is null)
         {
             throw new NoNullAllowedException("Source can not be null!");
         }

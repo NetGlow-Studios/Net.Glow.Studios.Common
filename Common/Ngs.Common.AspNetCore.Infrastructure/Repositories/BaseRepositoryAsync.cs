@@ -18,7 +18,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
 {
     private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();
 
-    public async Task<T?> CreateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -308,7 +308,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
     {
         var entity = await GetByIdAsync(id, cancellationToken);
 
-        if (entity == null)
+        if (entity is null)
         {
             throw new EntityNotFoundRepositoryException(id, typeof(T).FullName ?? string.Empty, $"Status cannot be updated to: {Enum.GetName(status)}");
         }

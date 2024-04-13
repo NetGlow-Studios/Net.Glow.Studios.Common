@@ -28,7 +28,7 @@ public static class ControllerExtensions
 
         var viewResult = viewEngine!.GetView(string.Empty, viewName, false);
 
-        if (viewResult.View == null)
+        if (viewResult.View is null)
         {
             throw new ArgumentNullException($"{viewName} not found");
         }
@@ -71,7 +71,7 @@ public static class ControllerExtensions
 
         var viewResult = viewEngine!.GetView(string.Empty, viewName, false);
 
-        if (viewResult.View == null)
+        if (viewResult.View is null)
         {
             throw new ArgumentNullException($"{viewName} not found");
         }

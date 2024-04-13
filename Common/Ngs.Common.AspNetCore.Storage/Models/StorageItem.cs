@@ -1,7 +1,3 @@
-using Ngs.Common.AspNetCore.Storage.Backup;
-using Ngs.Common.AspNetCore.Storage.Compression;
-using Ngs.Common.AspNetCore.Storage.Extensions;
-
 namespace Ngs.Common.AspNetCore.Storage.Models;
 
 public abstract class StorageItem
@@ -15,6 +11,11 @@ public abstract class StorageItem
     /// The path of this storage item.
     /// </summary>
     public string Path { get; protected set; } = string.Empty;
+    
+    /// <summary>
+    /// The full path of this storage item.
+    /// </summary>
+    public string FullPath { get; protected set; } = string.Empty;
 
     #region Checkers
 
@@ -73,6 +74,20 @@ public abstract class StorageItem
     public bool HasChildren() => (this as StorageDirectory)?.GetChildren().Count > 0 || (this as StorageRoot)?.GetChildren().Count > 0;
     
     /// <summary>
+    /// Check if this storage item has the given child.
+    /// </summary>
+    /// <param name="item"> The child to check. </param>
+    /// <returns> True if this storage item has the given child. </returns>
+    public bool HasChild(StorageItem item) => (this as StorageDirectory)?.GetChildren().Contains(item) ?? false;
+    
+    /// <summary>
+    /// Check if this storage item has the given child.
+    /// </summary>
+    /// <param name="name"> The name of the child to check. </param>
+    /// <returns> True if this storage item has the given child. </returns>
+    public bool HasChild(string name) => (this as StorageDirectory)?.GetChildren().Any(x => x.Name == name) ?? false;
+    
+    /// <summary>
     /// Check if this storage item is a child of the given directory.
     /// </summary>
     /// <param name="item"></param>
@@ -95,7 +110,7 @@ public abstract class StorageItem
     /// <exception cref="InvalidOperationException"> Thrown when this storage item does not have a parent. </exception>
     public StorageItem GetParent()
     {
-        if(this is StorageRoot root)
+        if(this is StorageRoot)
         {
             throw new InvalidOperationException("Root does not have a parent.");
         }
@@ -104,7 +119,6 @@ public abstract class StorageItem
         {
             return directory.Parent ?? throw new InvalidOperationException("This storage item does not have a parent.");
         }
-        
         
         return (this as StorageFile)?.Parent ?? throw new InvalidOperationException("This storage item does not have a parent.");
     }
@@ -117,7 +131,7 @@ public abstract class StorageItem
     /// <exception cref="InvalidOperationException"> Thrown when this storage item does not have a parent. </exception>
     public bool TryGetParent(out StorageItem parent)
     {
-        if(this is StorageRoot root)
+        if(this is StorageRoot)
         {
             parent = default!;
             return false;
@@ -154,8 +168,6 @@ public abstract class StorageItem
     
     public TStorageItem Cast<TStorageItem>() where TStorageItem : StorageItem
     {
-        var item = (TStorageItem)this!;
-        
-        return item;
+        return (TStorageItem)this;
     }
 }

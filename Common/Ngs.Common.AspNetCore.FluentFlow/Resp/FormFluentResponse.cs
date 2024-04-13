@@ -64,7 +64,7 @@ public class FormFluentResponse(LanguageEnum? currentLanguage = null) : FluentRe
 
         if (Errors.Count == 0) return base.GetActionResult();
         
-        Content ??= CurrentLanguage == null ? Errors.Where(x=>x.Language == default) : currentErrors;
+        Content ??= CurrentLanguage is null ? Errors.Where(x=>x.Language == default) : currentErrors;
         StatusCode = HttpStatusCode.BadRequest;
 
         return base.GetActionResult();

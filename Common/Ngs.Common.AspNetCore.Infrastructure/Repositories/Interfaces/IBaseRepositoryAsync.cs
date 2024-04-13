@@ -9,7 +9,7 @@ public interface IBaseRepositoryAsync<T> : IBaseRepositoryReadOnlyAsync<T> where
     /// </summary>
     /// <param name="entity">new entity (Entity: <see cref="T" />)</param>
     /// <param name="cancellationToken"> (CancellationToken: <see cref="CancellationToken" />)</param>
-    public Task<T?> CreateAsync(T entity, CancellationToken cancellationToken = default);
+    public Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create new records in database asynchronously.

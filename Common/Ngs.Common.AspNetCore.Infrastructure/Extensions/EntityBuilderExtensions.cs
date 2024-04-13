@@ -11,8 +11,8 @@ public static class EntityBuilderExtensions
         propertyBuilder
             .HasColumnType("varchar(max)")
             .HasConversion(
-                c => c.ToArray(),
-                c => c.ToList())
+                c => string.Join(",", c),
+                c => c.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(Guid.Parse).ToList())
             .Metadata.SetValueComparer(new ValueComparer<ICollection<Guid>>(
                 (c1, c2) => c2 != null && c1 != null && c1.SequenceEqual(c2),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
@@ -20,6 +20,7 @@ public static class EntityBuilderExtensions
 
         return propertyBuilder;
     }
+
     
     public static PropertyBuilder<ICollection<T>> HasCollectionConversion<T>(this PropertyBuilder<ICollection<T>> propertyBuilder)
     {

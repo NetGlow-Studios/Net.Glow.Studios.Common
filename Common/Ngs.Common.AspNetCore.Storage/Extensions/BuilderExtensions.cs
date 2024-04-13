@@ -19,6 +19,7 @@ public static class BuilderExtensions
         services.AddSingleton(new FileExtensionContentTypeProvider());
         
         var root = new StorageRoot(rootPath);
+        root.Build();
         services.AddSingleton(root);
         
         return services;
