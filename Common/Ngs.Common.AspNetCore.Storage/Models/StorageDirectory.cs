@@ -69,7 +69,7 @@ public class StorageDirectory : StorageItem
         if (directory.Parent is null || directory.Parent.FullName != FullPath)
         {
             throw new InvalidDirectoryLocationException($"The directory is not in the correct location. " +
-                $"The current directory location is: {directory.FullName} and the parent directory location is: {Path}");
+                                                        $"The current directory location is: {directory.FullName} and the parent directory location is: {Path}");
         }
 
         var subDirectoryModel = new StorageDirectory(directory, this);
@@ -90,33 +90,61 @@ public class StorageDirectory : StorageItem
         if (file.Directory is null || file.Directory.FullName.TrimEnd('\\') != FullPath.TrimEnd('\\'))
         {
             throw new InvalidFileLocationException($"The file is not in the correct location. " +
-                $"The current file location is: {file.FullName} and the parent directory location is: {Path}");
+                                                   $"The current file location is: {file.FullName} and the parent directory location is: {Path}");
         }
 
-        var fileModel = new StorageFile(file, this);
+        var fileModel = StorageFile.NewFileInstance(file, this);
 
         Children.Add(fileModel);
 
         return fileModel;
     }
-    
+
+    /// <summary>
+    /// Include a file to the directory.
+    /// </summary>
+    /// <param name="fileName"> Name of the file. </param>
+    /// <param name="stream"> Stream of the file. </param>
+    /// <returns> The file. </returns>
+    /// <exception cref="FileAlreadyExistsException"> Thrown when the file already exists. </exception>
     public StorageFile IncludeFile(string fileName, Stream stream)
     {
-        var file = new FileInfo($"{FullPath}{System.IO.Path.DirectorySeparatorChar}{fileName}");
+        var fileInfo = new FileInfo($"{FullPath}{System.IO.Path.DirectorySeparatorChar}{fileName}");
 
-        if (file.Exists)
+        if (fileInfo.Exists)
         {
             throw new FileAlreadyExistsException($"The file: {fileName} already exists.");
         }
-        
-        using var fileStream = file.Create();
+
+        using var fileStream = fileInfo.Create();
         stream.CopyTo(fileStream);
 
-        var fileModel = new StorageFile(file, this);
+        var createdFile = StorageFile.NewFileInstance(fileInfo, this);
 
-        Children.Add(fileModel);
+        Children.Add(createdFile);
 
-        return fileModel;
+        return createdFile;
+    }
+    
+    /// <summary>
+    /// Include a file to the directory.
+    /// </summary>
+    /// <param name="file"> File to include. </param>
+    /// <returns> The file. </returns>
+    public StorageFile IncludeFile(StorageFile file)
+    {
+        Children.Add(file);
+        return file;
+    }
+
+    /// <summary>
+    /// Exclude a child from the directory without removing it from the file system.
+    /// </summary>
+    /// <returns> The current directory. </returns>
+    public StorageDirectory ExcludeChild()
+    {
+        Children.Remove(this);
+        return this;
     }
 
     /// <summary>
@@ -137,7 +165,7 @@ public class StorageDirectory : StorageItem
                 throw new DirectoryAlreadyExistsException($"The directory: {name} already exists. Cannot be created.");
             }
 
-            return Children.First(x=>x.Name == name).Cast<StorageDirectory>();
+            return Children.First(x => x.Name == name).Cast<StorageDirectory>();
         }
 
         directory.Create();
@@ -321,7 +349,7 @@ public class StorageDirectory : StorageItem
 
         return newFolder;
     }
-    
+
     public StorageDirectory CopyContentIntoFrom(StorageDirectory folderToCopy)
     {
         var directory = new DirectoryInfo(folderToCopy.FullPath);
@@ -330,10 +358,11 @@ public class StorageDirectory : StorageItem
         {
             throw new DirectoryNotFoundException($"The directory: {folderToCopy.Name} does not exist.");
         }
-        
+
         foreach (var subDirectory in directory.GetDirectories())
         {
-            var newDirectory = new DirectoryInfo($"{FullPath}{System.IO.Path.DirectorySeparatorChar}{subDirectory.Name}");
+            var newDirectory =
+                new DirectoryInfo($"{FullPath}{System.IO.Path.DirectorySeparatorChar}{subDirectory.Name}");
 
             if (newDirectory.Exists)
             {
@@ -345,7 +374,7 @@ public class StorageDirectory : StorageItem
             var newFolder = new StorageDirectory(newDirectory, this);
             Children.Add(newFolder);
         }
-        
+
         foreach (var file in directory.GetFiles())
         {
             var newFile = new FileInfo($"{FullPath}{System.IO.Path.DirectorySeparatorChar}{file.Name}");
@@ -372,7 +401,7 @@ public class StorageDirectory : StorageItem
     public StorageDirectory RemoveIt(ThrowIfDirectory throwIf = ThrowIfDirectory.HasChildren)
     {
         var parent = Parent.GetAsDirectory();
-        
+
         parent.RemoveChild(this.Cast<StorageDirectory>(), throwIf);
 
         return parent;
@@ -381,23 +410,56 @@ public class StorageDirectory : StorageItem
     public StorageDirectory GetFromPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return this;
-        
+
         var pathSegments = path.Split(System.IO.Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
-        
+
         if (pathSegments.Length == 1)
         {
             return Children.First(x => x.IsDirectory() && x.Name.Equals(pathSegments[0]
-                .Replace("/", "").Replace("\\",""), StringComparison.CurrentCultureIgnoreCase)).GetAsDirectory();
+                .Replace("/", "").Replace("\\", ""), StringComparison.CurrentCultureIgnoreCase)).GetAsDirectory();
         }
-        
+
         foreach (var child in Children)
         {
-            if (child.IsDirectory() && child.Name.Equals(pathSegments[0].Replace("/", ""), StringComparison.CurrentCultureIgnoreCase))
+            if (child.IsDirectory() && child.Name.Equals(pathSegments[0].Replace("/", ""),
+                    StringComparison.CurrentCultureIgnoreCase))
             {
-                return child.GetAsDirectory().GetFromPath(string.Join(System.IO.Path.DirectorySeparatorChar, pathSegments[1..]));
+                return child.GetAsDirectory()
+                    .GetFromPath(string.Join(System.IO.Path.DirectorySeparatorChar, pathSegments[1..]));
             }
         }
-        
+
         throw new DirectoryNotFoundException("Directory not found");
+    }
+
+    /// <summary>
+    /// Clear the current directory from children.
+    /// </summary>
+    /// <returns> The current directory. </returns>
+    public StorageDirectory Clear()
+    {
+        while (HasChildren())
+        {
+            RemoveChildAt(0);
+        }
+
+        return this;
+    }
+
+    public StorageFile GetChildFile(string name)
+    {
+        var child = Children.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+        
+        if (child is null)
+        {
+            throw new FileNotFoundException($"The file: {name} does not exist.");
+        }
+
+        if (child is not StorageFile file)
+        {
+            throw new InvalidCastException($"The child: {name} is not a file.");
+        }
+
+        return file;
     }
 }

@@ -23,6 +23,15 @@ public class StorageTextFile : StorageFile
         return Cast<StorageJsonFile>();
     }
 
+    public StorageIniFile ToIni()
+    {
+        var iniFile = new StorageIniFile(GetInfo(), Parent);
+        
+        Parent.Cast<StorageDirectory>().ExcludeChild().IncludeFile(iniFile);
+        
+        return iniFile;
+    }
+
     public override string ToString()
     {
         return File.ReadAllText(Path);

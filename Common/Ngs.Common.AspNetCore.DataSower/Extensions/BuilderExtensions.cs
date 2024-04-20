@@ -11,7 +11,7 @@ namespace Ngs.Common.AspNetCore.DataSower.Extensions;
 public static class BuilderExtensions
 {
     /// <summary>
-    /// Prepares seeds of specified type to be add to the database.
+    /// Prepares seeds of specified type to be added to the database.
     /// </summary>
     /// <param name="services"> Service collection </param>
     /// <typeparam name="TDataSeed"> Data seed type </typeparam>
@@ -125,8 +125,7 @@ public static class BuilderExtensions
             // Check if the unique properties are defined in the seed.
             if (seedInstance.UniqueProperties.Count == 0)
             {
-                throw new UniquePropException(
-                    "Unique properties are not defined in the seed. Define at least one unique property.");
+                throw new UniquePropException("Unique properties are not defined in the seed. Define at least one unique property.");
             }
 
             // Get prepared seeds as Collection.

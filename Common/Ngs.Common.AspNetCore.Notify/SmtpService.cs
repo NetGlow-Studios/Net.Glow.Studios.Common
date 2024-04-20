@@ -39,7 +39,7 @@ public class SmtpService
 
         if (!mailModel.To.Any())
         {
-            throw new NotifySmtpReceiverException();
+            throw new NotifySmtpReceiverException("No receivers specified.");
         }
         
         mailModel.To.ToList().ForEach(x => mailMessage.To.Add(x));
@@ -83,7 +83,7 @@ public class SmtpService
 
         if (!mailModel.To.Any() || mailModel.To.Any(string.IsNullOrWhiteSpace))
         {
-            throw new NotifySmtpReceiverException();
+            throw new NotifySmtpReceiverException("No receiver specified.");
         }
         
         mailModel.To.ToList().ForEach(x => mailMessage.To.Add(x));

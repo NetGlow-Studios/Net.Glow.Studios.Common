@@ -53,7 +53,7 @@ public class StorageFile : StorageItem
     /// Get information about the file.
     /// </summary>
     /// <returns></returns>
-    public FileInfo GetInfo() => new(Path);
+    public FileInfo GetInfo() => new(FullPath);
     
     /// <summary>
     /// Rename the file.
@@ -242,6 +242,12 @@ public class StorageFile : StorageItem
         return new StorageFile(fileInfo, root);
     }
     
+    /// <summary>
+    /// Create a new file instance with a specific type (txt, json, img, etc.) based on the file extension for casting.
+    /// </summary>
+    /// <param name="file"> File to create a new instance of. </param>
+    /// <param name="parent"> Parent of the file. </param>
+    /// <returns> The new file instance. </returns>
     public static StorageFile NewFileInstance(FileInfo file, StorageItem parent)
     {
         var fileModel = file.Extension switch

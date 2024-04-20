@@ -7,10 +7,6 @@ namespace Ngs.Common.AspNetCore.Notify.Exceptions;
 /// </summary>
 public class NotifySmtpReceiverException : BaseException
 {
-    public NotifySmtpReceiverException()
-    {
-    }
-
     public NotifySmtpReceiverException(string? message) : base(message)
     {
     }

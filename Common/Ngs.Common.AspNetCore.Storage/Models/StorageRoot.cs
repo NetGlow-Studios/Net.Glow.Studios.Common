@@ -213,4 +213,46 @@ public class StorageRoot : StorageItem
         
         throw new DirectoryNotFoundException("Directory not found");
     }
+    
+    /// <summary>
+    /// Remove a child from the current directory.
+    /// </summary>
+    /// <param name="index"> Index of the child to remove. </param>
+    /// <returns> The current directory. </returns>
+    /// <exception cref="ArgumentOutOfRangeException"> Thrown when the index is out of range. </exception>
+    public StorageRoot RemoveChildAt(int index)
+    {
+        if (index < 0 || index >= Children.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, "The index is out of range.");
+        }
+
+        var child = Children[index];
+
+        switch (child)
+        {
+            case StorageDirectory directory:
+                RemoveChild(directory);
+                break;
+            case StorageFile file:
+                RemoveChild(file);
+                break;
+        }
+
+        return this;
+    }
+    
+    /// <summary>
+    /// Clear the root from children.
+    /// </summary>
+    /// <returns> The root. </returns>
+    public StorageRoot Clear()
+    {
+        while (HasChildren())
+        {
+            RemoveChildAt(0);
+        }
+        
+        return this;
+    }
 }
