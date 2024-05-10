@@ -29,4 +29,8 @@
     <ItemGroup>
         <None Include="License.txt" Pack="true" PackagePath=""/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Exceptions\" />
+    </ItemGroup>
 </Project>

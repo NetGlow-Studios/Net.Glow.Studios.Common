@@ -50,7 +50,7 @@ public abstract class BaseEntity<TId> where TId : struct
     /// <summary>
     /// Created at date of the entity.
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
     /// Created by user of the entity.
@@ -60,7 +60,7 @@ public abstract class BaseEntity<TId> where TId : struct
     /// <summary>
     /// Updated at date of the entity.
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     /// <summary>
     /// Updated by user of the entity.

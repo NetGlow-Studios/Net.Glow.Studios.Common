@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ngs.Common.AspNetCore.Entities;
+using Ngs.Common.AspNetCore.Infrastructure.Extensions;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Configuration;
 
@@ -48,16 +49,16 @@ public class BaseUserEntityConfiguration<TUserEntity> : IEntityTypeConfiguration
             .HasColumnOrder(7);
         
         builder.Property(x => x.VerifiedAt)
-            .HasColumnType("datetime2(0)")
+            .HasColumnDateTimeOffsetType()
             .HasColumnOrder(8);
         
         builder.Property(x => x.LastPasswordUpdateAt)
-            .HasColumnType("datetime2(0)")
+            .HasColumnDateTimeOffsetType()
             .HasColumnOrder(9)
             .IsRequired();
         
         builder.Property(x => x.CreatedAt)
-            .HasColumnType("datetime2(0)")
+            .HasColumnDateTimeOffsetType()
             .HasColumnOrder(99)
             .IsRequired();
     }

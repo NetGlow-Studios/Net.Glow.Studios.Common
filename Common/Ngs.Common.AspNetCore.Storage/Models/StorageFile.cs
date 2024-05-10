@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Ngs.Common.AspNetCore.Storage.Compression;
+using Ngs.Common.AspNetCore.Storage.Extensions;
 
 namespace Ngs.Common.AspNetCore.Storage.Models;
 
@@ -106,7 +107,7 @@ public class StorageFile : StorageItem
     /// <returns> The content of the file as a byte array. </returns>
     public byte[] ConvertToBytes()
     {
-        return File.ReadAllBytes(Path);
+        return File.ReadAllBytes(FullPath);
     }
     
     /// <summary>
@@ -115,7 +116,7 @@ public class StorageFile : StorageItem
     /// <returns> The content of the file as a byte array. </returns>
     public async Task<byte[]> ConvertToBytesAsync()
     {
-        return await File.ReadAllBytesAsync(Path);
+        return await File.ReadAllBytesAsync(FullPath);
     }
     
     /// <summary>
@@ -134,7 +135,7 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile UpdateContent(byte[] content)
     {
-        File.WriteAllBytes(Path, content);
+        File.WriteAllBytes(FullPath, content);
         
         return this;
     }
@@ -146,7 +147,7 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile UpdateContent(Stream content)
     {
-        using var fileStream = File.Create(Path);
+        using var fileStream = File.Create(FullPath);
         
         content.CopyTo(fileStream);
         
@@ -159,7 +160,7 @@ public class StorageFile : StorageItem
     /// <param name="content"> New content of the file. </param>
     public StorageFile UpdateContent(IFormFile content)
     {
-        using var fileStream = File.Create(Path);
+        using var fileStream = File.Create(FullPath);
         
         content.CopyTo(fileStream);
         
@@ -172,7 +173,7 @@ public class StorageFile : StorageItem
     /// <param name="content"> New content of the file. </param>
     public StorageFile UpdateContent(string content)
     {
-        File.WriteAllText(Path, content);
+        File.WriteAllText(FullPath, content);
         
         return this;
     }
@@ -184,11 +185,11 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile MoveTo(StorageDirectory directory)
     {
-        var newPath = Path.Replace(Parent.Path, directory.Path);
+        var newAbsPath = Path.Replace(Parent.FullPath, directory.FullPath);
         
-        GetInfo().MoveTo(newPath);
+        GetInfo().MoveTo(newAbsPath);
         
-        Path = newPath;
+        Path = newAbsPath;
         Parent = directory;
         
         return this;
@@ -240,6 +241,19 @@ public class StorageFile : StorageItem
         root.IncludeFile(fileInfo);
         
         return new StorageFile(fileInfo, root);
+    }
+
+    /// <summary>
+    /// Remove the file.
+    /// </summary>
+    /// <returns> The parent directory of the removed file. </returns>
+    public StorageDirectory RemoveIt()
+    {
+        var parentDirectory = Parent.GetAsDirectory();
+        
+        parentDirectory.RemoveChild(this);
+        
+        return parentDirectory;
     }
     
     /// <summary>

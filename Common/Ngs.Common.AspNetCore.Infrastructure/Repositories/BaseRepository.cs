@@ -14,9 +14,10 @@ namespace Ngs.Common.AspNetCore.Infrastructure.Repositories;
 /// <param name="applicationDbContext"> The application db context </param>
 /// <typeparam name="T"> The entity type </typeparam>
 [DebuggerStepThrough]
-public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseRepository<T>, IBaseRepositoryReadOnly<T> where T : BaseEntity
+public abstract class BaseRepository<T>(DbContext applicationDbContext) : BaseRepositoryReadOnly<T>(applicationDbContext), IBaseRepository<T>  where T : BaseEntity
 {
     private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();
+    private readonly DbContext _applicationDbContext = applicationDbContext;
 
     /// <summary>
     /// Create a new entity
@@ -27,19 +28,19 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     {
         try
         {
-            entity.Id = Guid.NewGuid();
+            entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
             entity.Status = StatusEnum.Active;
-            entity.CreatedAt = DateTime.UtcNow;
-            entity.UpdatedAt = DateTime.UtcNow;
+            entity.CreatedAt = DateTimeOffset.UtcNow;
+            entity.UpdatedAt = DateTimeOffset.UtcNow;
 
             _dbSet.Add(entity);
-            applicationDbContext.SaveChanges();
+            _applicationDbContext.SaveChanges();
 
             return entity;   
         }
         catch (Exception e)
         {
-            throw new EntityNotCreatedRepositoryException($"Resource ({nameof(T)}) not created", e);
+            throw new EntityNotCreatedException($"Resource ({nameof(T)}) not created", e);
         }
     }
 
@@ -54,275 +55,21 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
         {
             entities.ToList().ForEach(entity =>
             {
-                entity.Id = Guid.NewGuid();
+                entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
                 entity.Status = StatusEnum.Active;
-                entity.CreatedAt = DateTime.UtcNow;
-                entity.UpdatedAt = DateTime.UtcNow;
+                entity.CreatedAt = DateTimeOffset.UtcNow;
+                entity.UpdatedAt = DateTimeOffset.UtcNow;
             });
 
             _dbSet.AddRange(entities);
-            applicationDbContext.SaveChanges();
+            _applicationDbContext.SaveChanges();
 
             return entities.ToList();
         }
         catch (Exception e)
         {
-            throw new EntityNotCreatedRepositoryException($"Resource ({nameof(T)}) not created", e);
+            throw new EntityNotCreatedException($"Resource ({nameof(T)}) not created", e);
         }
-    }
-
-    /// <summary>
-    /// Count the number of entities
-    /// </summary>
-    /// <returns> The number of entities </returns>
-    public int Count()
-    {
-        return _dbSet.Count();
-    }
-
-    /// <summary>
-    /// Count the number of entities that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"></param>
-    /// <returns></returns>
-    public int CountWhere(Expression<Func<T, bool>> predicate)
-    {
-        return _dbSet.Where(predicate).Count();
-    }
-
-    /// <summary>
-    /// Count the number of entities with a specific status
-    /// </summary>
-    /// <param name="statusEnum"> The status of the entities </param>
-    /// <returns> The number of entities </returns>
-    public int CountByStatus(StatusEnum statusEnum)
-    {
-        return CountWhere(x => x.Status == statusEnum);
-    }
-
-    /// <summary>
-    /// Count all the entities
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The number of entities </returns>
-    public ICollection<T> GetAll(params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.ToList();
-    }
-
-    /// <summary>
-    /// Get all the entities that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities that satisfy the condition </returns>
-    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.Where(predicate).ToList();
-    }
-
-    /// <summary>
-    /// Get all the entities with a specific status
-    /// </summary>
-    /// <param name="status"> The status of the entities </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities with the specific status </returns>
-    public ICollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.Where(x => x.Status == status).ToList();
-    }
-
-    /// <summary>
-    /// Get all the entities without a specific status
-    /// </summary>
-    /// <param name="status"> The status of the entities </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities without the specific status </returns>
-    public ICollection<T> GetWithoutStatus(StatusEnum status, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.Where(x => x.Status != status).ToList();
-    }
-
-    /// <summary>
-    /// Get the top n entities
-    /// </summary>
-    /// <param name="n"> The number of entities to get </param>
-    /// <param name="status"> The status of the entities </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities with the specific status </returns>
-    public ICollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.Where(x => x.Status == status).Take(n).ToList();
-    }
-
-    /// <summary>
-    /// Get entities by their ids with specific properties
-    /// </summary>
-    /// <param name="ids"> The ids of the entities to get </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities without the specific status </returns>
-    public ICollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.Where(x => ids.Contains(x.Id)).ToList();
-    }
-
-    /// <summary>
-    /// Get first entity that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The first entity that satisfy the condition </returns>
-    public T GetFirst(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.First(predicate);
-    }
-
-    /// <summary>
-    /// Get first entity that satisfy a condition or null
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The first entity that satisfy the condition or null </returns>
-    public T? GetFirstOrDefault(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.FirstOrDefault(predicate);
-    }
-
-    /// <summary>
-    /// Get last entity that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last entity that satisfy the condition </returns>
-    public T GetLast(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.Last(predicate);
-    }
-
-    /// <summary>
-    /// Get last entity that satisfy a condition or null
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last entity that satisfy the condition or null </returns>
-    public T? GetLastOrDefault(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.LastOrDefault(predicate);
-    }
-
-    /// <summary>
-    /// Get last created entity
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last created entity </returns>
-    public T? GetLastCreated(params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.OrderBy(x => x.CreatedAt).FirstOrDefault();
-    }
-
-    /// <summary>
-    /// Get last updated entity
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last updated entity </returns>
-    public T? GetLastUpdated(params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.OrderBy(x => x.UpdatedAt).FirstOrDefault();
-    }
-
-    /// <summary>
-    /// Get random entity
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The random entity </returns>
-    public T GetRandom(params string[] includeProperties)
-    {
-        var rand = new Random();
-
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        var entities = query.ToList();
-
-        return entities[rand.Next(entities.Count - 1)];
-    }
-
-    /// <summary>
-    /// Get entity by id
-    /// </summary>
-    /// <param name="id"> The id of the entity to get </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns></returns>
-    public T? GetById(Guid id, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return query.FirstOrDefault(x => x.Id == id);
     }
 
     /// <summary>
@@ -331,10 +78,10 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="entity"> The entity to update </param>
     public void Update(T entity)
     {
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTimeOffset.UtcNow;
 
         _dbSet.Update(entity);
-        applicationDbContext.SaveChanges();
+        _applicationDbContext.SaveChanges();
     }
 
     /// <summary>
@@ -343,10 +90,10 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
     /// <param name="entities"> The entities to update </param>
     public void UpdateMany(ICollection<T> entities)
     {
-        entities.ToList().ForEach(x => x.UpdatedAt = DateTime.UtcNow);
+        entities.ToList().ForEach(x => x.UpdatedAt = DateTimeOffset.UtcNow);
 
         _dbSet.UpdateRange(entities);
-        applicationDbContext.SaveChanges();
+        _applicationDbContext.SaveChanges();
     }
 
     /// <summary>
@@ -406,7 +153,7 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
         if (entity is null) return;
 
         _dbSet.Remove(entity);
-        applicationDbContext.SaveChanges();
+        _applicationDbContext.SaveChanges();
     }
 
     /// <summary>
@@ -418,56 +165,6 @@ public abstract class BaseRepository<T>(DbContext applicationDbContext) : IBaseR
         var entities = _dbSet.Where(predicate);
 
         _dbSet.RemoveRange(entities);
-        applicationDbContext.SaveChanges();
-    }
-
-    /// <summary>
-    /// Check if any entity satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <returns> True if any entity satisfy the condition, false otherwise </returns>
-    public bool Any(Expression<Func<T, bool>> predicate)
-    {
-        return _dbSet.Any(predicate);
-    }
-
-    /// <summary>
-    /// Check if all entities satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <returns> True if all entities satisfy the condition, false otherwise </returns>
-    public bool All(Expression<Func<T, bool>> predicate)
-    {
-        return _dbSet.All(predicate);
-    }
-
-    /// <summary>
-    /// Check if an entity with a specific id exists
-    /// </summary>
-    /// <param name="id"> The id of the entity </param>
-    /// <returns> True if the entity exists, false otherwise </returns>
-    public bool IsWithId(Guid id)
-    {
-        return GetById(id) != null;
-    }
-
-    /// <summary>
-    /// Check if an entity with a specific id is active
-    /// </summary>
-    /// <param name="id"> The id of the entity </param>
-    /// <returns> True if the entity is active, false otherwise </returns>
-    public bool IsActive(Guid id)
-    {
-        return GetById(id)?.Status == StatusEnum.Active;
-    }
-
-    /// <summary>
-    /// Check if an entity with a specific id has specific status
-    /// </summary>
-    /// <param name="status"> The status of the entity </param>
-    /// <returns> True if the entity has the specific status, false otherwise </returns>
-    public bool IsWithStatus(StatusEnum status)
-    {
-        return GetAll().Any(x => x.Status == status);
+        _applicationDbContext.SaveChanges();
     }
 }

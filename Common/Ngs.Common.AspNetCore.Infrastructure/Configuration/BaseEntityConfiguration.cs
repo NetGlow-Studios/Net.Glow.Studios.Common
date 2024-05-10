@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ngs.Common.AspNetCore.Entities;
+using Ngs.Common.AspNetCore.Infrastructure.Extensions;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Configuration;
 
@@ -32,7 +33,7 @@ public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<
             .HasColumnOrder(95);
         
         builder.Property(x => x.CreatedAt)
-            .HasColumnType("datetime2(0)")
+            .HasColumnDateTimeOffsetType()
             .HasColumnOrder(96)
             .IsRequired();
         
@@ -40,7 +41,7 @@ public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<
             .HasColumnOrder(97);
         
         builder.Property(x => x.UpdatedAt)
-            .HasColumnType("datetime2(0)")
+            .HasColumnDateTimeOffsetType()
             .HasColumnOrder(98)
             .IsRequired();
         

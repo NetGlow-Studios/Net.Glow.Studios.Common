@@ -214,6 +214,27 @@ public class StorageRoot : StorageItem
         throw new DirectoryNotFoundException("Directory not found");
     }
     
+    public StorageFile GetFileFromPath(string path)
+    {
+        var pathSegments = path.Split(System.IO.Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+
+        if (pathSegments.Length == 1)
+        {
+            return (Children.First(x=>x.IsFile() && x.Name.Equals(pathSegments[0]
+                .Replace("/",""), StringComparison.CurrentCultureIgnoreCase)) as StorageFile)!;
+        }
+
+        foreach (var child in Children)
+        {
+            if (child.IsDirectory() && child.Name.Equals(pathSegments[0].Replace("/",""), StringComparison.CurrentCultureIgnoreCase))
+            {
+                return (child as StorageDirectory)!.GetFileFromPath(string.Join(System.IO.Path.DirectorySeparatorChar, pathSegments[1..]));
+            }
+        }
+        
+        throw new FileNotFoundException("File not found");
+    }
+    
     /// <summary>
     /// Remove a child from the current directory.
     /// </summary>

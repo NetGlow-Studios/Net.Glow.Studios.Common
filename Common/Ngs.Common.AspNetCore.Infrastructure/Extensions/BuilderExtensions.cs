@@ -22,8 +22,8 @@ public static class BuilderExtensions
     /// <typeparam name="TUser"> The type of the user class. </typeparam>
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
-    public static IServiceCollection AddUserIdentity<TUser, TDbContext>(this IServiceCollection services,
-        bool requireConfirmedAccount = true) where TUser : IdentityUser<Guid> where TDbContext : DbContext
+    public static IServiceCollection AddUserIdentity<TUser, TDbContext>(this IServiceCollection services, bool requireConfirmedAccount = true)
+        where TUser : IdentityUser<Guid> where TDbContext : DbContext
     {
         services.AddDefaultIdentity<TUser>(options => options.SignIn.RequireConfirmedAccount = requireConfirmedAccount)
             .AddEntityFrameworkStores<TDbContext>();
@@ -41,9 +41,7 @@ public static class BuilderExtensions
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     /// <exception cref="ArgumentNullException"> The <paramref name="configurationManager"/> is null. </exception>
-    public static IServiceCollection AddSqlConnection<TDbContext>(this IServiceCollection services,
-        ConfigurationManager configurationManager, string migrationAssembly = "",
-        string connectionStringKey = "DefaultConnection")
+    public static IServiceCollection AddSqlConnection<TDbContext>(this IServiceCollection services, ConfigurationManager configurationManager, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
         where TDbContext : DbContext
     {
         if (string.IsNullOrEmpty(migrationAssembly))
@@ -81,8 +79,7 @@ public static class BuilderExtensions
     /// <param name="migrationAssembly"> The assembly name for the migrations. </param>
     /// <param name="connectionStringKey"> The key for the connection string in the configuration. If not provided, the default is "DefaultConnection". </param>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
-    public static IServiceCollection AddSqlConnection(this IServiceCollection services, Type dbContextType,
-        IConfiguration configuration, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
+    public static IServiceCollection AddSqlConnection(this IServiceCollection services, Type dbContextType, IConfiguration configuration, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
     {
         ArgumentNullException.ThrowIfNull(dbContextType);
 
@@ -104,9 +101,7 @@ public static class BuilderExtensions
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     /// <exception cref="ArgumentNullException"> The <paramref name="configurationManager"/> is null. </exception>
-    public static IServiceCollection AddSqliteConnection<TDbContext>(this IServiceCollection services,
-        ConfigurationManager configurationManager, string migrationAssembly = "",
-        string connectionStringKey = "DefaultConnection")
+    public static IServiceCollection AddSqliteConnection<TDbContext>(this IServiceCollection services, ConfigurationManager configurationManager, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
         where TDbContext : DbContext
     {
         if (string.IsNullOrEmpty(migrationAssembly))
@@ -144,8 +139,7 @@ public static class BuilderExtensions
     /// <param name="migrationAssembly"> The assembly name for the migrations. </param>
     /// <param name="connectionStringKey"> The key for the connection string in the configuration. If not provided, the default is "DefaultConnection". </param>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
-    public static IServiceCollection AddSqliteConnection(this IServiceCollection services, Type dbContextType,
-        IConfiguration configuration, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
+    public static IServiceCollection AddSqliteConnection(this IServiceCollection services, Type dbContextType, IConfiguration configuration, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
     {
         ArgumentNullException.ThrowIfNull(dbContextType);
 

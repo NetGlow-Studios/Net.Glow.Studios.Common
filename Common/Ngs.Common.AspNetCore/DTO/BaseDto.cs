@@ -21,7 +21,7 @@ public abstract class BaseDto
     /// <summary>
     /// Date and time when the entity was created.
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
     /// User who created the entity.
@@ -31,7 +31,7 @@ public abstract class BaseDto
     /// <summary>
     /// Date and time when the entity was updated.
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     /// <summary>
     /// User who updated the entity.

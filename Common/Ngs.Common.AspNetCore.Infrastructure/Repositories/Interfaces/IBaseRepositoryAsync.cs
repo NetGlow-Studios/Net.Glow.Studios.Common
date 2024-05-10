@@ -24,6 +24,7 @@ public interface IBaseRepositoryAsync<T> : IBaseRepositoryReadOnlyAsync<T> where
     /// </summary>
     /// <param name="entity">Record to update.</param>
     /// <param name="cancellationToken"> (CancellationToken: <see cref="CancellationToken" />)</param>
+    /// <returns>Updated record.</returns>
     public Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -31,6 +32,7 @@ public interface IBaseRepositoryAsync<T> : IBaseRepositoryReadOnlyAsync<T> where
     /// </summary>
     /// <param name="entities">Records to update.</param>
     /// <param name="cancellationToken"> (CancellationToken: <see cref="CancellationToken" />)</param>
+    /// <returns>Updated records.</returns>
     public Task<ICollection<T>> UpdateManyAsync(ICollection<T> entities, CancellationToken cancellationToken = default);
     
     /// <summary>

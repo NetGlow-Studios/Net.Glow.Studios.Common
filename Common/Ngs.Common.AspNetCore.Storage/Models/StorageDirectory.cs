@@ -125,7 +125,7 @@ public class StorageDirectory : StorageItem
 
         return createdFile;
     }
-    
+
     /// <summary>
     /// Include a file to the directory.
     /// </summary>
@@ -449,7 +449,7 @@ public class StorageDirectory : StorageItem
     public StorageFile GetChildFile(string name)
     {
         var child = Children.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-        
+
         if (child is null)
         {
             throw new FileNotFoundException($"The file: {name} does not exist.");
@@ -461,5 +461,28 @@ public class StorageDirectory : StorageItem
         }
 
         return file;
+    }
+
+    public StorageFile GetFileFromPath(string path)
+    {
+        var pathSegments = path.Split(System.IO.Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+
+        if (pathSegments.Length == 1)
+        {
+            return Children.First(x => x.IsFile() && x.Name.Equals(pathSegments[0]
+                .Replace("/", "").Replace("\\", ""), StringComparison.CurrentCultureIgnoreCase)).Cast<StorageFile>();
+        }
+
+        foreach (var child in Children)
+        {
+            if (child.IsDirectory() && child.Name.Equals(pathSegments[0].Replace("/", ""),
+                    StringComparison.CurrentCultureIgnoreCase))
+            {
+                return child.GetAsDirectory()
+                    .GetFileFromPath(string.Join(System.IO.Path.DirectorySeparatorChar, pathSegments[1..]));
+            }
+        }
+
+        throw new FileNotFoundException("File not found");
     }
 }

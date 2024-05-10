@@ -130,7 +130,7 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     public T? GetById(Guid id, params string[] includeProperties);
     
     /// <summary>
-    /// 
+    ///   Check if any record exists with given predicate.
     /// </summary>
     /// <param name="predicate"></param>
     /// <returns></returns>
@@ -138,7 +138,7 @@ public interface IBaseRepositoryReadOnly<T> where T : class
     
 
     /// <summary>
-    /// 
+    ///  Check if all records exists with given predicate.
     /// </summary>
     /// <param name="predicate"></param>
     /// <returns></returns>

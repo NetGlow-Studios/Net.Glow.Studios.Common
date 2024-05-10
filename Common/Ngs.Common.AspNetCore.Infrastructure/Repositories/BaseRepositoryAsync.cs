@@ -14,9 +14,10 @@ namespace Ngs.Common.AspNetCore.Infrastructure.Repositories;
 /// <param name="applicationDbContext"> The application db context </param>
 /// <typeparam name="T"> The entity type </typeparam>
 [DebuggerStepThrough]
-public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : IBaseRepositoryAsync<T> where T : BaseEntity
+public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : BaseRepositoryReadOnlyAsync<T>(applicationDbContext), IBaseRepositoryAsync<T> where T : BaseEntity
 {
     private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();
+    private readonly DbContext _applicationDbContext = applicationDbContext;
 
     public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)
     {
@@ -24,17 +25,17 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         {
             entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
             entity.Status = StatusEnum.Active;
-            entity.CreatedAt = DateTime.UtcNow;
-            entity.UpdatedAt = DateTime.UtcNow;
+            entity.CreatedAt = DateTimeOffset.UtcNow;
+            entity.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _dbSet.AddAsync(entity, cancellationToken);
-            await applicationDbContext.SaveChangesAsync(cancellationToken);
+            await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
             return entity;
         }
         catch (Exception e)
         {
-            throw new EntityNotCreatedRepositoryException($"Resource ({nameof(T)}) not created", e);
+            throw new EntityNotCreatedException($"Entity ({nameof(T)}) not created", e);
         }
     }
 
@@ -48,251 +49,39 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
             {
                 entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
                 entity.Status = StatusEnum.Active;
-                entity.CreatedAt = DateTime.UtcNow;
-                entity.UpdatedAt = DateTime.UtcNow;
+                entity.CreatedAt = DateTimeOffset.UtcNow;
+                entity.UpdatedAt = DateTimeOffset.UtcNow;
                 newEntities.Add(entity);
             }
             catch (Exception e)
             {
-                throw new EntityNotCreatedRepositoryException($"Resource ({nameof(T)}) not created", e);
+                throw new EntityNotCreatedException($"Entities ({nameof(T)}) not created", e);
             }
         });
 
         await _dbSet.AddRangeAsync(entities, cancellationToken);
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return newEntities;
     }
 
-    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.CountAsync(cancellationToken);
-    }
-
-    public async Task<int> CountWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.CountAsync(predicate, cancellationToken: cancellationToken);
-    }
-
-    public async Task<int> CountByStatusAsync(StatusEnum statusEnum, CancellationToken cancellationToken = default)
-    {
-        return await CountWhereAsync(x => x.Status == statusEnum, cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetAllAsync(CancellationToken cancellationToken = default,
-        params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.ToListAsync(cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.Where(predicate).ToListAsync(cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetWithStatusAsync(StatusEnum status,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.Where(x => x.Status == status).ToListAsync(cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetWithoutStatusAsync(StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.Where(x => x.Status != status).ToListAsync(cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetTopNByStatusAsync(int n, StatusEnum status, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.Where(x => x.Status == status).OrderBy(x=>x.Id).Take(n).ToListAsync(cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetByIdsAsync(IEnumerable<Guid> ids,
-        CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.Where(x => ids.Contains(x.Id)).ToListAsync(cancellationToken);
-    }
-
-    public async Task<T> GetFirstAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.FirstAsync(predicate, cancellationToken);
-    }
-
-    public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.FirstOrDefaultAsync(predicate, cancellationToken);
-    }
-
-    public async Task<T> GetLastAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.LastAsync(predicate, cancellationToken);
-    }
-
-    public async Task<T?> GetLastOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.LastOrDefaultAsync(predicate, cancellationToken);
-    }
-
-    public async Task<T?> GetLastCreatedAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.OrderBy(x => x.CreatedAt).FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task<T?> GetLastUpdatedAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.OrderBy(x => x.UpdatedAt).FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task<T?> GetRandomAsync(CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var rand = new Random();
-
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        var entities = await query.ToListAsync(cancellationToken);
-
-        return entities[rand.Next(entities.Count - 1)];
-    }
-
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) =>
-                    current.Include(includeProperty!));
-
-        return await query.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetPageAsync(int page, int pageSize, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) => current.Include(includeProperty!));
-
-        return await query.Skip(page * pageSize).Take(pageSize).ToListAsync(cancellationToken);
-    }
-
-    public async Task<ICollection<T>> GetPageWhereAsync(Expression<Func<T, bool>> predicate, int page, int pageSize, CancellationToken cancellationToken = default, params string[] includeProperties)
-    {
-        includeProperties = includeProperties.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        
-        var query = includeProperties
-            .Aggregate<string?, IQueryable<T>>(
-                _dbSet, (current, includeProperty) => current.Include(includeProperty!));
-
-        return await query.Where(predicate).Skip(page * pageSize).Take(pageSize).ToListAsync(cancellationToken);
-    }
-
     public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTimeOffset.UtcNow;
 
         _dbSet.Update(entity);
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
+        
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
         
         return entity;
     }
 
     public async Task<ICollection<T>> UpdateManyAsync(ICollection<T> entities, CancellationToken cancellationToken = default)
     {
-        entities.ToList().ForEach(x => x.UpdatedAt = DateTime.UtcNow);
+        entities.ToList().ForEach(x => x.UpdatedAt = DateTimeOffset.UtcNow);
 
         _dbSet.UpdateRange(entities);
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
         
         return entities;
     }
@@ -310,7 +99,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
 
         if (entity is null)
         {
-            throw new EntityNotFoundRepositoryException(id, typeof(T).FullName ?? string.Empty, $"Status cannot be updated to: {Enum.GetName(status)}");
+            throw new EntityNotFoundException(id, typeof(T).FullName ?? string.Empty, $"Status cannot be updated to: {Enum.GetName(status)}");
         }
 
         entity.Status = status;
@@ -322,12 +111,12 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
     {
         var entity = await GetByIdAsync(id, cancellationToken);
 
-        if (entity != null)
+        if (entity == null)
         {
-            entity.Status = StatusEnum.Deleted;
-
-            await UpdateAsync(entity, cancellationToken);
+            throw new EntityNotFoundException("Entity not found. Cannot be removed.");
         }
+
+        await UpdateStatusAsync(entity, StatusEnum.Deleted, cancellationToken);
     }
 
     public async Task RemoveSoftAllAsync(CancellationToken cancellationToken = default)
@@ -342,8 +131,7 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
         await UpdateManyAsync(entities.ToList(), cancellationToken);
     }
 
-    public async Task RemoveSoftWhereAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default)
+    public async Task RemoveSoftWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var entities = _dbSet.Where(predicate);
 
@@ -359,56 +147,20 @@ public abstract class BaseRepositoryAsync<T>(DbContext applicationDbContext) : I
     {
         var entity = await GetByIdAsync(id, cancellationToken);
 
-        if (entity != null)
+        if (entity == null)
         {
-            _dbSet.Remove(entity);
-            await applicationDbContext.SaveChangesAsync(cancellationToken);
+            throw new EntityNotFoundException("Entity not found. Cannot be removed.");
         }
+        
+        _dbSet.Remove(entity);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
-
-    public async Task RemoveHardAllAsync(CancellationToken cancellationToken = default)
-    {
-        _dbSet.RemoveRange(await GetAllAsync(cancellationToken));
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task RemoveHardWhereAsync(Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default)
+    
+    public async Task RemoveHardWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var entities = await _dbSet.Where(predicate).ToListAsync(cancellationToken);
 
         _dbSet.RemoveRange(entities);
-        await applicationDbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.AnyAsync(predicate, cancellationToken);
-    }
-
-    public async Task<bool> AllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.AllAsync(predicate, cancellationToken);
-    }
-
-    public async Task<bool> IsWithIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var entity = await GetByIdAsync(id, cancellationToken);
-
-        return entity != null;
-    }
-
-    public async Task<bool> IsActiveAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var entity = await GetByIdAsync(id, cancellationToken);
-
-        return entity?.Status == StatusEnum.Active;
-    }
-
-    public async Task<bool> IsWithStatusAsync(StatusEnum status, CancellationToken cancellationToken = default)
-    {
-        var entities = await GetAllAsync(cancellationToken);
-
-        return entities.Any(x => x.Status == status);
+        await _applicationDbContext.SaveChangesAsync(cancellationToken);
     }
 }

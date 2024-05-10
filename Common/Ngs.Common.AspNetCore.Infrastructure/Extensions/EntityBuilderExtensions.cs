@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PropertyBuilder = System.Reflection.Emit.PropertyBuilder;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Extensions;
 
@@ -34,6 +35,20 @@ public static class EntityBuilderExtensions
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v!.GetHashCode())),
                 c => c.ToList()));
 
+        return propertyBuilder;
+    }
+    
+    public static PropertyBuilder<T> HasColumnDateTimeType<T>(this PropertyBuilder<T> propertyBuilder, int precision = 0)
+    {
+        propertyBuilder.HasColumnType($"datetime2({precision})");
+            
+        return propertyBuilder;
+    }
+    
+    public static PropertyBuilder<T> HasColumnDateTimeOffsetType<T>(this PropertyBuilder<T> propertyBuilder, int precision = 0)
+    {
+        propertyBuilder.HasColumnType($"datetimeoffset({precision})");
+            
         return propertyBuilder;
     }
 }
