@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
-using Ngs.Common.AspNetCore.Storage.Compression;
-using Ngs.Common.AspNetCore.Storage.Extensions;
+using Ngs.Common.AspNetCore.Storage.Const;
+using Ngs.Common.AspNetCore.Storage.Converters;
+using Ngs.Common.AspNetCore.Storage.Exceptions;
+using Ngs.Common.AspNetCore.Storage.Models.Files;
 
 namespace Ngs.Common.AspNetCore.Storage.Models;
 
@@ -20,7 +21,7 @@ public class StorageFile : StorageItem
     /// <summary>
     /// Parent of the file.
     /// </summary>
-    public StorageItem Parent { get; private set; }
+    public StorageFolderItem Parent { get; }
 
     /// <summary>
     /// File Extension
@@ -28,34 +29,38 @@ public class StorageFile : StorageItem
     public string Extension => GetInfo().Extension;
     
     /// <summary>
+    /// File Full Name
+    /// </summary>
+    public string FullName => $"{Name}{Extension}";
+
+    /// <summary>
     /// File Content Type
     /// </summary>
     public string ContentType { get; protected set; } = "application/octet-stream";
-    
+
     /// <summary>
     /// File Size
     /// </summary>
     public long Size => GetInfo().Length;
     
-    /// <summary>
-    /// Compressor instance for the file.
-    /// </summary>
-    public FileCompressor Compressor => new(this);
+    public StorageFileConverter Convert { get; init; }
 
-    public StorageFile(FileSystemInfo file, StorageItem parent)
+    public StorageFile(FileInfo file, StorageFolderItem parent)
     {
-        Name = file.Name;
-        Path = string.Concat(parent.Path, System.IO.Path.DirectorySeparatorChar, file.Name);
-        FullPath = file.FullName;
         Parent = parent;
+        Name = file.Name[..^file.Extension.Length];
+        AbsolutePath = file.FullName;
+        RelativePath = Path.Combine(parent.RelativePath, FullName);
+        Convert = new StorageFileConverter(this);
     }
-    
+
     /// <summary>
-    /// Get information about the file.
+    /// Get information about the directory.
     /// </summary>
-    /// <returns></returns>
-    public FileInfo GetInfo() => new(FullPath);
-    
+    /// <returns> Information about the directory. </returns>
+    public FileInfo GetInfo() => new(AbsolutePath);
+
+
     /// <summary>
     /// Rename the file.
     /// </summary>
@@ -63,16 +68,33 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile Rename(string name)
     {
-        var newPath = Path.Replace(Name, name);
+        if (name.Contains('.'))
+        {
+            name = name[..^Extension.Length];
+        }
         
-        GetInfo().MoveTo(newPath);
+        var newAbsolutePath = AbsolutePath.Replace(Name, name);
         
-        Path = Path.Replace(Name, name);
+        GetInfo().MoveTo(newAbsolutePath);
+        
+        AbsolutePath = newAbsolutePath;
+        RelativePath = RelativePath.Replace(Name, name);
         Name = name;
         
         return this;
     }
-    
+
+    /// <summary>
+    /// Remove the file.
+    /// </summary>
+    /// <returns> The parent folder. </returns>
+    public StorageFolderItem RemoveIt()
+    {
+        Parent.RemoveFile(this);
+
+        return Parent;
+    }
+
     /// <summary>
     /// Change the extension of the file.
     /// </summary>
@@ -80,52 +102,32 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile ChangeExtension(string extension)
     {
-        extension = extension.Replace(".", "");
-        
-        var splitPath = Path.Split('.');
-        var newPath = Path.Replace(splitPath[^1], extension);
-        
-        GetInfo().MoveTo(newPath);
-        
-        Path = Path.Replace(splitPath[^1], extension);
-        
+        AbsolutePath = AbsolutePath.Replace(Extension, extension);
+        RelativePath = RelativePath.Replace(Extension, extension);
+
+        GetInfo().MoveTo(AbsolutePath);
+
         return this;
-    }
-    
-    /// <summary>
-    /// Get the content of the file as a FormFile.
-    /// </summary>
-    /// <returns> The content of the file as a FormFile. </returns>
-    public IFormFile ConvertToFormFile()
-    {
-        return new FormFile(GetInfo().OpenRead(), 0, Size, Name, Name);
     }
 
     /// <summary>
-    /// Get the content of the file as a byte array.
+    /// Move the file to another folder.
     /// </summary>
-    /// <returns> The content of the file as a byte array. </returns>
-    public byte[] ConvertToBytes()
+    /// <param name="directory"> New directory of the file. </param>
+    /// <returns> The file. </returns>
+    public StorageFile MoveTo(StorageFolderItem directory)
     {
-        return File.ReadAllBytes(FullPath);
+        return Parent.MoveFile(this, directory);
     }
     
     /// <summary>
-    /// Get the content of the file as a byte array.
+    /// Copy the file to another folder.
     /// </summary>
-    /// <returns> The content of the file as a byte array. </returns>
-    public async Task<byte[]> ConvertToBytesAsync()
+    /// <param name="directory"> New directory of the file. </param>
+    /// <returns> The new file. </returns>
+    public StorageFile CopyTo(StorageFolderItem directory)
     {
-        return await File.ReadAllBytesAsync(FullPath);
-    }
-    
-    /// <summary>
-    /// Get the content of the file as a string.
-    /// </summary>
-    /// <returns> The content of the file as a string. </returns>
-    public Stream ConvertToStream()
-    {
-        return GetInfo().OpenRead();
+        return Parent.CopyFile(this, directory);
     }
     
     /// <summary>
@@ -135,7 +137,7 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile UpdateContent(byte[] content)
     {
-        File.WriteAllBytes(FullPath, content);
+        File.WriteAllBytes(AbsolutePath, content);
         
         return this;
     }
@@ -147,7 +149,7 @@ public class StorageFile : StorageItem
     /// <returns> The file. </returns>
     public StorageFile UpdateContent(Stream content)
     {
-        using var fileStream = File.Create(FullPath);
+        using var fileStream = File.Create(AbsolutePath);
         
         content.CopyTo(fileStream);
         
@@ -160,7 +162,7 @@ public class StorageFile : StorageItem
     /// <param name="content"> New content of the file. </param>
     public StorageFile UpdateContent(IFormFile content)
     {
-        using var fileStream = File.Create(FullPath);
+        using var fileStream = File.Create(AbsolutePath);
         
         content.CopyTo(fileStream);
         
@@ -168,120 +170,57 @@ public class StorageFile : StorageItem
     }
     
     /// <summary>
-    /// Update the content of the file.
+    /// Check if this storage item is a root child.
     /// </summary>
-    /// <param name="content"> New content of the file. </param>
-    public StorageFile UpdateContent(string content)
-    {
-        File.WriteAllText(FullPath, content);
-        
-        return this;
-    }
+    /// <returns> True if this storage item is a root child. </returns>
+    public bool IsRootChild() => Parent is StorageRoot;
     
     /// <summary>
-    /// Move the file to another directory.
+    /// Check if this storage item is a child of the given directory.
     /// </summary>
-    /// <param name="directory"> New directory of the file. </param>
-    /// <returns> The file. </returns>
-    public StorageFile MoveTo(StorageDirectory directory)
-    {
-        var newAbsPath = Path.Replace(Parent.FullPath, directory.FullPath);
-        
-        GetInfo().MoveTo(newAbsPath);
-        
-        Path = newAbsPath;
-        Parent = directory;
-        
-        return this;
-    }
+    /// <param name="item"></param>
+    /// <returns> True if this storage item is a child of the given folder. </returns>
+    public bool IsChildOf(StorageFolderItem item) => Parent == item;
     
     /// <summary>
-    /// Move the file to the root.
-    /// </summary>
-    /// <param name="root"> New root of the file. </param>
-    /// <returns> The file. </returns>
-    public StorageFile MoveTo(StorageRoot root)
-    {
-        var newPath = Path.Replace(Parent.Path, root.Path);
-        
-        GetInfo().MoveTo(newPath);
-        
-        Path = newPath;
-        Parent = root;
-        
-        return this;
-    }
-    
-    /// <summary>
-    /// Copy the file to another directory.
-    /// </summary>
-    /// <param name="directory"> New directory of the file. </param>
-    /// <returns> The new file. </returns>
-    public StorageFile CopyTo(StorageDirectory directory)
-    {
-        var newPath = Path.Replace(Parent.Path, directory.Path);
-        
-        File.Copy(Path, newPath);
-        
-        var fileInfo = new FileInfo(newPath);
-        
-        directory.IncludeFile(fileInfo);
-        
-        return new StorageFile(fileInfo, directory);
-    }
-    
-    public StorageFile CopyTo(StorageRoot root)
-    {
-        var newPath = Path.Replace(Parent.Path, root.Path);
-        
-        File.Copy(Path, newPath);
-        
-        var fileInfo = new FileInfo(newPath);
-        
-        root.IncludeFile(fileInfo);
-        
-        return new StorageFile(fileInfo, root);
-    }
-
-    /// <summary>
-    /// Remove the file.
-    /// </summary>
-    /// <returns> The parent directory of the removed file. </returns>
-    public StorageDirectory RemoveIt()
-    {
-        var parentDirectory = Parent.GetAsDirectory();
-        
-        parentDirectory.RemoveChild(this);
-        
-        return parentDirectory;
-    }
-    
-    /// <summary>
-    /// Create a new file instance with a specific type (txt, json, img, etc.) based on the file extension for casting.
+    /// Create a new instance of the file with specific type for supported extensions.
     /// </summary>
     /// <param name="file"> File to create a new instance of. </param>
     /// <param name="parent"> Parent of the file. </param>
-    /// <returns> The new file instance. </returns>
-    public static StorageFile NewFileInstance(FileInfo file, StorageItem parent)
+    /// <returns> New instance of the file. </returns>
+    public static StorageFile CreateNewInstance(FileInfo file, StorageFolderItem parent)
     {
-        var fileModel = file.Extension switch
-        {
-            ".json" => new StorageJsonFile(file, parent),
-            ".txt" => new StorageTextFile(file, parent),
-            ".jpg" => new StorageImageFile(file, parent),
-            ".jpeg" => new StorageImageFile(file, parent),
-            ".png" => new StorageImageFile(file, parent),
-            ".gif" => new StorageImageFile(file, parent),
-            ".bmp" => new StorageImageFile(file, parent),
-            ".heic" => new StorageImageFile(file, parent),
-            ".heif" => new StorageImageFile(file, parent),
-            ".webp" => new StorageImageFile(file, parent),
-            ".svg" => new StorageImageFile(file, parent),
-            ".ico" => new StorageImageFile(file, parent),
-            ".avif" => new StorageImageFile(file, parent),
-            _ => new StorageFile(file, parent)
-        };
+        var extension = file.Extension.ToLower();
+
+        if(SupportedFileExtensions.TextFile.Contains(extension)) 
+            return new StorageTextFile(file, parent);
+
+        if (SupportedFileExtensions.IniFile.Contains(extension)) 
+            return new StorageIniFile(file, parent);
         
-        return fileModel;
+        if(SupportedFileExtensions.JsonFile.Contains(extension))
+            return new StorageJsonFile(file, parent);
+        
+        if (SupportedFileExtensions.ImageFile.Contains(extension)) 
+            return new StorageImageFile(file, parent);
+        
+        return new StorageFile(file, parent);
+    }
+    
+    /// <summary>
+    /// Cast the file to another storage file type.
+    /// </summary>
+    /// <typeparam name="T"> Type of the storage file. </typeparam>
+    /// <returns> The file. </returns>
+    public T Cast<T>() where T : StorageFile
+    {
+        try
+        {
+            return (T)this;
+        }
+        catch (InvalidCastException e)
+        {
+            throw new NotSupportedExtensionCastException("Cannot be cast to the given file type. Or the file extension is not supported. ", e);
+        }
     }
 }

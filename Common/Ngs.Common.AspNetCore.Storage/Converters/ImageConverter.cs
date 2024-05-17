@@ -1,5 +1,5 @@
 using System.Reflection;
-using Ngs.Common.AspNetCore.Storage.Models;
+using Ngs.Common.AspNetCore.Storage.Models.Files;
 
 namespace Ngs.Common.AspNetCore.Storage.Converters;
 
@@ -23,11 +23,10 @@ public class ImageConverter
     public StorageImageFile ToIco() => Convert("ico");
     public StorageImageFile ToPsd() => Convert("psd");
     
-    
     private StorageImageFile Convert(string to)
     {
         var from = Image.Extension.Replace(".", "").ToLower();
-        var bytes = Image.ConvertToBytes();
+        var bytes = Image.Convert.ToByteArray();
         
         var converterType = typeof(Ngs.Common.Tools.Image.ImageConverter).GetNestedTypes()
             .FirstOrDefault(x => x.Name.Equals(from, StringComparison.CurrentCultureIgnoreCase));
@@ -48,7 +47,7 @@ public class ImageConverter
     private async Task<StorageImageFile> ConvertAsync(string to)
     {
         var from = Image.Extension.Replace(".", "").ToLower();
-        var bytes = await Image.ConvertToBytesAsync();
+        var bytes = await Image.Convert.ToByteArrayAsync();
         
         var converterType = typeof(Ngs.Common.Tools.Image.ImageConverter).GetNestedTypes()
             .FirstOrDefault(x => x.Name.Equals(from, StringComparison.CurrentCultureIgnoreCase));

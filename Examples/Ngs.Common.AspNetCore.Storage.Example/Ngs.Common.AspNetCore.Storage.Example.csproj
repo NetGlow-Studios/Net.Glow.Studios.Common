@@ -19,8 +19,4 @@
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\Common\Ngs.Common.AspNetCore.Storage\Ngs.Common.AspNetCore.Storage.csproj" />
-    </ItemGroup>
-
 </Project>
