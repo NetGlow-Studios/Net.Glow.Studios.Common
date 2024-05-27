@@ -2,14 +2,14 @@ using Ngs.Common.AspNetCore.Storage.Models;
 
 namespace Ngs.Common.AspNetCore.Storage.Compression;
 
-public class DirectoryCompressor
+public class FolderCompressor
 {
     /// <summary>
     /// The directory to compress.
     /// </summary>
     private StorageFolder Directory { get; }
 
-    public DirectoryCompressor(StorageFolder directory)
+    public FolderCompressor(StorageFolder directory)
     {
         Directory = directory;
     }

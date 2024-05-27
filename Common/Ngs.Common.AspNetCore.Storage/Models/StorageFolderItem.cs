@@ -119,6 +119,16 @@ public abstract class StorageFolderItem : StorageItem
     }
     
     /// <summary>
+    /// Get a folder by name or create it if it does not exist.
+    /// </summary>
+    /// <param name="name"> The name of the folder. </param>
+    /// <returns> The folder with the given name. </returns>
+    public StorageFolder GetFolderOrCreate(string name)
+    {
+        return TryGetFolder(name, out var folder) ? folder : CreateFolder(name);
+    }
+    
+    /// <summary>
     /// Add a file.
     /// </summary>
     /// <param name="fileName"> The name of the file. </param>

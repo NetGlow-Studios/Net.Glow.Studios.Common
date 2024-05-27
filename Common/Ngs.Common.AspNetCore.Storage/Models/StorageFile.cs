@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Ngs.Common.AspNetCore.Storage.Compression;
 using Ngs.Common.AspNetCore.Storage.Const;
 using Ngs.Common.AspNetCore.Storage.Converters;
 using Ngs.Common.AspNetCore.Storage.Exceptions;
@@ -44,6 +45,8 @@ public class StorageFile : StorageItem
     public long Size => GetInfo().Length;
     
     public StorageFileConverter Convert { get; init; }
+    
+    public FileCompressor Compressor { get; init; }
 
     public StorageFile(FileInfo file, StorageFolderItem parent)
     {
@@ -52,6 +55,7 @@ public class StorageFile : StorageItem
         AbsolutePath = file.FullName;
         RelativePath = Path.Combine(parent.RelativePath, FullName);
         Convert = new StorageFileConverter(this);
+        Compressor = new FileCompressor(this);
     }
 
     /// <summary>

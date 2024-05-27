@@ -39,9 +39,9 @@ public class FileCompressor
     /// <summary>
     /// Unzips the file into a directory
     /// </summary>
-    /// <param name="removeCurrentZip"> Remove the current zip file after unzipping </param>
+    /// <param name="removeZipAfterUnzipping"> Remove the current zip file after unzipping </param>
     /// <returns> The directory containing the unzipped files </returns>
-    public StorageFolder Unzip(bool removeCurrentZip = false)
+    public StorageFolder Unzip(bool removeZipAfterUnzipping = false)
     {
         // var parent = File.GetParent().Cast<StorageDirectory>();
         // var zipPath = File.FullPath;
@@ -73,7 +73,7 @@ public class FileCompressor
         //     }   
         // }
         //
-        // if(removeCurrentZip) parent.RemoveChild(File);
+        // if(removeZipAfterUnzipping) parent.RemoveChild(File);
         //
         // return parent;
         
