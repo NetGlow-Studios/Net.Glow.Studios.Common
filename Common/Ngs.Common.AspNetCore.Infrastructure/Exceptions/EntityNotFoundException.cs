@@ -14,11 +14,11 @@ public class EntityNotFoundException : BaseNotFoundException
     {
     }
 
-    public EntityNotFoundException(Guid? id, string objName, string? message) : base(id, objName, message)
+    public EntityNotFoundException(object? id, string objName, string? message) : base(id, objName, message)
     {
     }
 
-    public EntityNotFoundException(Guid? id, string objName, string? message, Exception innerException) : base(id, objName, message, innerException)
+    public EntityNotFoundException(object? id, string objName, string? message, Exception innerException) : base(id, objName, message, innerException)
     {
     }
 }

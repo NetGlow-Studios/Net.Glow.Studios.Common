@@ -15,10 +15,6 @@ public class ExampleUsage
         //Add DbContext for SQL Server to DI container.
         Services.AddSqlConnection<ExampleDbContext>(Configuration, migrationAssembly: GetType().Assembly.FullName!);
         
-        //Or Add DbContext for SQLite to DI container.
-        Services.AddSqliteConnection<ExampleDbContext>(Configuration, migrationAssembly: GetType().Assembly.FullName!);
-        
-        
         //Add repositories to DI container from assembly.
         Services.AddRepositories(GetType().Assembly);
         

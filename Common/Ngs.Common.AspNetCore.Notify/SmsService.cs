@@ -16,7 +16,7 @@ public class SmsService(SmsConfiguration configuration)
     /// <returns> A task that represents the asynchronous operation </returns>
     public async Task SendAsync(SmsModel sms)
     {
-        var options = new RestClientOptions("https://xl2zll.api.infobip.com") { MaxTimeout = -1 };
+        var options = new RestClientOptions("https://xl2zll.api.infobip.com");
         var client = new RestClient(options);
         var request = new RestRequest("/sms/2/text/advanced", Method.Post);
         request.AddHeader("Authorization", configuration.AuthorisationToken);

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ngs.Common.AspNetCore.Entities;
 using Ngs.Common.AspNetCore.Infrastructure.Extensions;
@@ -27,18 +28,33 @@ public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<
             .HasColumnOrder(93);
         
         builder.Property(x => x.AdditionalInformation)
-            .HasColumnOrder(94);
+            .HasColumnOrder(94)
+            .HasMaxLength(1000)
+            .IsRequired(false);
         
         builder.Property(x => x.Tags)
-            .HasColumnOrder(95);
+            .HasColumnName("Tags")
+            .HasColumnOrder(95)
+            .HasMaxLength(250)
+            .IsRequired(false)
+            .HasConversion(
+                v => string.Join(';', v), 
+                v => v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList())
+            .Metadata.SetValueComparer(new ValueComparer<ICollection<string>>(
+                (c1, c2) => c2 != null && c1 != null && c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToList()));
         
         builder.Property(x => x.CreatedAt)
             .HasColumnDateTimeOffsetType()
             .HasColumnOrder(96)
             .IsRequired();
+
+        builder.HasIndex(x => x.CreatedAt);
         
         builder.Property(x => x.CreatedBy)
-            .HasColumnOrder(97);
+            .HasColumnOrder(97)
+            .IsRequired(false);
         
         builder.Property(x => x.UpdatedAt)
             .HasColumnDateTimeOffsetType()
@@ -46,6 +62,7 @@ public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<
             .IsRequired();
         
         builder.Property(x => x.UpdatedBy)
-            .HasColumnOrder(99);
+            .HasColumnOrder(99)
+            .IsRequired(false);
     }
 }

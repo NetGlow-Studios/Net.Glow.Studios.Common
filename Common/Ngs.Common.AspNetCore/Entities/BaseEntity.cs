@@ -11,8 +11,10 @@ public abstract class BaseEntity : BaseEntity<Guid>;
 /// Base entity for all entities in the infrastructure.
 /// </summary>
 /// <typeparam name="TId"> Type of the identifier. </typeparam>
-public abstract class BaseEntity<TId> where TId : struct
+public abstract class BaseEntity<TId> where TId : struct, IEquatable<TId>
 {
+    private string _tags;
+
     protected BaseEntity()
     {
         CreatedAt = DateTime.UtcNow;
@@ -22,9 +24,9 @@ public abstract class BaseEntity<TId> where TId : struct
         UpdatedBy = null;
 
         Status = StatusEnum.Active;
-
-        Tags = string.Empty;
+        
         AdditionalInformation = string.Empty;
+        _tags = string.Empty;
     }
 
     /// <summary>
@@ -35,7 +37,11 @@ public abstract class BaseEntity<TId> where TId : struct
     /// <summary>
     /// Tags for the entity.
     /// </summary>
-    public string Tags { get; set; }
+    public ICollection<string> Tags
+    {
+        get => _tags.Split(';', StringSplitOptions.RemoveEmptyEntries);
+        set => _tags = string.Join(';', value);
+    }
 
     /// <summary>
     /// Additional information for the entity.
@@ -67,6 +73,26 @@ public abstract class BaseEntity<TId> where TId : struct
     /// </summary>
     public string? UpdatedBy { get; set; }
 
+    public void AddTag(string tag)
+    {
+        var tags = Tags.ToList();
+        if (!tags.Contains(tag))
+        {
+            tags.Add(tag);
+            Tags = tags;
+        }
+    }
+    
+    public void RemoveTag(string tag)
+    {
+        var tags = Tags.ToList();
+        if (tags.Contains(tag))
+        {
+            tags.Remove(tag);
+            Tags = tags;
+        }
+    }
+    
     public override bool Equals(object? obj)
     {
         if (obj is null || GetType() != obj.GetType())
@@ -80,7 +106,7 @@ public abstract class BaseEntity<TId> where TId : struct
 
     protected bool Equals(BaseEntity<TId> other)
     {
-        return Id.Equals(other.Id) && Tags == other.Tags && AdditionalInformation == other.AdditionalInformation &&
+        return Id.Equals(other.Id) && Tags.SequenceEqual(other.Tags) && AdditionalInformation == other.AdditionalInformation &&
                Status == other.Status && CreatedAt.Equals(other.CreatedAt) && CreatedBy == other.CreatedBy &&
                UpdatedAt.Equals(other.UpdatedAt) && UpdatedBy == other.UpdatedBy;
     }

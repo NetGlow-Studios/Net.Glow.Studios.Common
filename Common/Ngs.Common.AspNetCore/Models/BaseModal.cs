@@ -18,10 +18,21 @@ public abstract class BaseModal
     /// <summary>
     /// Show close button
     /// </summary>
-    public bool UseCloseButton { get; set; } = true;
+    public bool UseCloseXButton { get; set; } = true;
    
     /// <summary>
     /// Modal id
     /// </summary>
     public string ModalId { get; set; } = "modal-to-show";
+    
+    
+    /// <summary>
+    /// Close button text
+    /// </summary>
+    public string CloseButtonText { get; set; } = "Close";
+    
+    /// <summary>
+    /// Close button class (for styles)
+    /// </summary>
+    public string CloseButtonClass { get; set; } = "btn btn-primary";
 }

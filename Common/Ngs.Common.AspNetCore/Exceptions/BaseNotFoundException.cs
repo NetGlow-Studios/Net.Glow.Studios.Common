@@ -23,7 +23,7 @@ public abstract class BaseNotFoundException : BaseException
     /// <param name="id">Id referenced to entity in database.</param>
     /// <param name="objName">Object name to specify the object with a problem.</param>
     /// <param name="message">Additional message.</param>
-    protected BaseNotFoundException(Guid? id, string objName, string? message) 
+    protected BaseNotFoundException(object? id, string objName, string? message) 
         : base($"{objName} with id: '{id}' not found. {message}")
     {
     }
@@ -35,7 +35,7 @@ public abstract class BaseNotFoundException : BaseException
     /// <param name="objName">Object name to specify the object with a problem.</param>
     /// <param name="message">Additional message.</param>
     /// <param name="innerException">Inner Exception.</param>
-    protected BaseNotFoundException(Guid? id, string objName, string? message, Exception innerException) 
+    protected BaseNotFoundException(object? id, string objName, string? message, Exception innerException) 
         : base($"{objName} with id: '{id}' not found. {message}", innerException)
     {
     }

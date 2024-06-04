@@ -11,6 +11,4 @@ namespace Ngs.Common.AspNetCore.Infrastructure.Context;
 /// <typeparam name="TDbContext"> The type of the context. </typeparam>
 /// <typeparam name="TUser"> The type of the user. </typeparam>
 public abstract class BaseUserIdentityDbContext<TDbContext, TUser>(DbContextOptions<TDbContext> options) 
-    : IdentityUserContext<TUser, Guid>(options) where TDbContext : DbContext where TUser : IdentityUser<Guid>
-{
-}
+    : IdentityUserContext<TUser, Guid>(options) where TDbContext : DbContext where TUser : IdentityUser<Guid>;

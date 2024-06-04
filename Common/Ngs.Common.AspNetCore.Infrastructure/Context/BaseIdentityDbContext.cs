@@ -12,6 +12,4 @@ namespace Ngs.Common.AspNetCore.Infrastructure.Context;
 /// <typeparam name="TUser"> The type of user. </typeparam>
 /// <typeparam name="TRole"> The type of role. </typeparam>
 public abstract class BaseIdentityDbContext<TDbContext, TUser, TRole>(DbContextOptions<TDbContext> options) : IdentityDbContext<TUser, TRole, Guid>(options) 
-    where TDbContext : DbContext where TUser : IdentityUser<Guid> where TRole : IdentityRole<Guid>
-{
-}
+    where TDbContext : DbContext where TUser : IdentityUser<Guid> where TRole : IdentityRole<Guid>;

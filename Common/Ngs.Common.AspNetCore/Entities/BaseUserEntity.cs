@@ -31,17 +31,17 @@ public abstract class BaseUserEntity<T> : IdentityUser<T> where T : IEquatable<T
     /// <summary>
     /// Date and time when the user was created.
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
     
     /// <summary>
     /// Date and time when the user was verified.
     /// </summary>
-    public DateTime? VerifiedAt { get; set; }
+    public DateTimeOffset? VerifiedAt { get; set; }
     
     /// <summary>
     /// Date and time when the user's password was last updated.
     /// </summary>
-    public DateTime LastPasswordUpdateAt { get; set; } 
+    public DateTimeOffset LastPasswordUpdateAt { get; set; } 
     
     public BaseUserEntity()
     {
@@ -51,8 +51,8 @@ public abstract class BaseUserEntity<T> : IdentityUser<T> where T : IEquatable<T
         IsAdmin = false;
         IsBanned = false;
         
-        CreatedAt = DateTime.UtcNow;
-        LastPasswordUpdateAt = DateTime.UtcNow;
+        CreatedAt = DateTimeOffset.UtcNow;
+        LastPasswordUpdateAt = DateTimeOffset.UtcNow;
     }
     
     /// <summary>

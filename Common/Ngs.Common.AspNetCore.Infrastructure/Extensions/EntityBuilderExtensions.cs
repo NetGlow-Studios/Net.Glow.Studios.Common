@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PropertyBuilder = System.Reflection.Emit.PropertyBuilder;
 
 namespace Ngs.Common.AspNetCore.Infrastructure.Extensions;
 
@@ -10,7 +9,8 @@ public static class EntityBuilderExtensions
     public static PropertyBuilder<ICollection<Guid>> HasGuidCollectionConversion(this PropertyBuilder<ICollection<Guid>> propertyBuilder)
     {
         propertyBuilder
-            .HasColumnType("varchar(max)")
+            .HasColumnType("bytea")
+            // .HasColumnType("varchar(max)")
             .HasConversion(
                 c => string.Join(",", c),
                 c => c.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(Guid.Parse).ToList())
@@ -21,12 +21,11 @@ public static class EntityBuilderExtensions
 
         return propertyBuilder;
     }
-
     
     public static PropertyBuilder<ICollection<T>> HasCollectionConversion<T>(this PropertyBuilder<ICollection<T>> propertyBuilder)
     {
         propertyBuilder
-            .HasColumnType("varchar(max)")
+            .HasColumnType("bytea")
             .HasConversion(
                 c => c.ToArray(),
                 c => c.ToList())
@@ -47,7 +46,7 @@ public static class EntityBuilderExtensions
     
     public static PropertyBuilder<T> HasColumnDateTimeOffsetType<T>(this PropertyBuilder<T> propertyBuilder, int precision = 0)
     {
-        propertyBuilder.HasColumnType($"datetimeoffset({precision})");
+        propertyBuilder.HasColumnType("timestamp with time zone");
             
         return propertyBuilder;
     }

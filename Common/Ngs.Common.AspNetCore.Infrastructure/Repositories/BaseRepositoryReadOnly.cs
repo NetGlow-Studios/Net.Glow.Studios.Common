@@ -8,324 +8,379 @@ using Ngs.Common.AspNetCore.Infrastructure.Repositories.Interfaces;
 namespace Ngs.Common.AspNetCore.Infrastructure.Repositories;
 
 [DebuggerStepThrough]
-public abstract class BaseRepositoryReadOnly<T>(DbContext applicationDbContext) : IBaseRepositoryReadOnly<T> where T : BaseEntity
-{
-    private readonly DbSet<T> _dbSet = applicationDbContext.Set<T>();
+public abstract class BaseRepositoryReadOnly<TEntity>(DbContext applicationDbContext) : BaseRepositoryReadOnly<TEntity, Guid>(applicationDbContext) where TEntity : BaseEntity;
 
-    /// <summary>
-    /// Count the number of entities
-    /// </summary>
-    /// <returns> The number of entities </returns>
+
+[DebuggerStepThrough]
+public abstract class BaseRepositoryReadOnly<TEntity, TId>(DbContext applicationDbContext) : IBaseRepositoryReadOnly<TEntity, TId> where TEntity : BaseEntity<TId> where TId : struct, IEquatable<TId>
+{
+    private readonly DbSet<TEntity> _dbSet = applicationDbContext.Set<TEntity>();
+    
     public int Count()
     {
-        return _dbSet.Count();
+        return Count(x=>true);
     }
 
-    /// <summary>
-    /// Count the number of entities that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"></param>
-    /// <returns></returns>
-    public int CountWhere(Expression<Func<T, bool>> predicate)
+    public int Count(Expression<Func<TEntity, bool>> predicate)
     {
-        return _dbSet.Where(predicate).Count();
+        return _dbSet.Count(predicate);
     }
 
-    /// <summary>
-    /// Count the number of entities with a specific status
-    /// </summary>
-    /// <param name="statusEnum"> The status of the entities </param>
-    /// <returns> The number of entities </returns>
-    public int CountByStatus(StatusEnum statusEnum)
+    public int Count(StatusEnum statusEnum)
     {
-        return CountWhere(x => x.Status == statusEnum);
+        return Count(x => x.Status == statusEnum);
     }
 
-    /// <summary>
-    /// Count all the entities
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The number of entities </returns>
-    public ICollection<T> GetAll(params string[] includeProperties)
+    public ICollection<TEntity> GetAll(params string[] includeProperties)
+    {
+        return GetAllOrdered(order => order.CreatedAt, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAllOrdered(predicate, order => order.CreatedAt, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAll(StatusEnum status, params string[] includeProperties)
+    {
+        return GetAllOrdered(status, order => order.CreatedAt, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAll(StatusEnum status, Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAllOrdered(status, predicate, order => order.CreatedAt, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAllOrdered(Expression<Func<TEntity, object>> orderBy, params string[] includeProperties)
+    {
+        return GetAllOrdered(orderBy, true, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAllOrdered(Expression<Func<TEntity, object>> orderBy, bool ascending, params string[] includeProperties)
+    {
+        return GetAllOrdered(x => true, orderBy, ascending, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAllOrdered(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, object>> orderBy, params string[] includeProperties)
+    {
+        return GetAllOrdered(predicate, orderBy, true, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAllOrdered(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, object>> orderBy, bool ascending, params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty) 
                     => current.Include(includeProperty));
-
-        return query.ToList();
+        
+        return (ascending ? query.Where(predicate).OrderBy(orderBy) : query.Where(predicate).OrderByDescending(orderBy)).ToList();
     }
 
-    /// <summary>
-    /// Get all the entities that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities that satisfy the condition </returns>
-    public ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate, params string[] includeProperties)
+    public ICollection<TEntity> GetAllOrdered(StatusEnum status, Expression<Func<TEntity, object>> orderBy, params string[] includeProperties)
+    {
+        return GetAllOrdered(x=>x.Status == status, orderBy, includeProperties);
+    }
+
+    public ICollection<TEntity> GetAllOrdered(StatusEnum status, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, object>> orderBy, params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty) 
                     => current.Include(includeProperty));
-
-        return query.Where(predicate).ToList();
+        
+        return query.Where(x=>x.Status == status).Where(predicate).OrderBy(orderBy).ToList();
     }
 
-    /// <summary>
-    /// Get all the entities with a specific status
-    /// </summary>
-    /// <param name="status"> The status of the entities </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities with the specific status </returns>
-    public ICollection<T> GetWithStatus(StatusEnum status, params string[] includeProperties)
+    public async Task<ICollection<TEntity>> GetAllOrdered(StatusEnum[] statuses, Expression<Func<TEntity, object>> orderBy, params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
+                _dbSet, (current, includeProperty) 
+                    => current.Include(includeProperty));
+        
+        return await query.Where(x=>statuses.Contains(x.Status)).OrderBy(orderBy).ToListAsync();
+    }
+
+    public ICollection<TEntity> GetActive(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Active, includeProperties);
+    }
+
+    public ICollection<TEntity> GetActive(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Active, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetDraft(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Draft, includeProperties);
+    }
+
+    public ICollection<TEntity> GetDraft(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Draft, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetHidden(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Hidden, includeProperties);
+    }
+
+    public ICollection<TEntity> GetHidden(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Hidden, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetInactive(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Inactive, includeProperties);
+    }
+
+    public ICollection<TEntity> GetInactive(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Inactive, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetOutdated(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Outdated, includeProperties);
+    }
+
+    public ICollection<TEntity> GetOutdated(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Outdated, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetArchived(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Archived, includeProperties);
+    }
+
+    public ICollection<TEntity> GetArchived(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Archived, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetSuspended(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Suspended, includeProperties);
+    }
+
+    public ICollection<TEntity> GetSuspended(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Suspended, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetLocked(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Locked, includeProperties);
+    }
+
+    public ICollection<TEntity> GetLocked(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.Locked, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetPendingActivation(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.PendingActivation, includeProperties);
+    }
+
+    public ICollection<TEntity> GetPendingActivation(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.PendingActivation, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetPendingDeactivation(params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.PendingDeactivation, includeProperties);
+    }
+
+    public ICollection<TEntity> GetPendingDeactivation(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        return GetAll(StatusEnum.PendingDeactivation, predicate, includeProperties);
+    }
+
+    public ICollection<TEntity> GetWithoutStatus(StatusEnum status, params string[] includeProperties)
+    {
+        return GetAll(x => x.Status != status, includeProperties);
+    }
+
+    public ICollection<TEntity> GetTopN(int number, params string[] includeProperties)
+    {
+        return GetTopN(x => true, number, includeProperties);
+    }
+
+    public ICollection<TEntity> GetTopN(StatusEnum status, int number, params string[] includeProperties)
+    {
+        return GetTopN(x => x.Status == status, number, includeProperties);
+    }
+
+    public ICollection<TEntity> GetTopN(Expression<Func<TEntity, bool>> predicate, int number, params string[] includeProperties)
+    {
+        var query = includeProperties
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
+                _dbSet, (current, includeProperty) 
+                    => current.Include(includeProperty));
+        
+        return query.Where(predicate).Take(number).ToList();
+    }
+
+    public ICollection<TEntity> GetByIds(IEnumerable<TId> ids, params string[] includeProperties)
+    {
+        return GetAll(x => ids.Contains(x.Id), includeProperties);
+    }
+
+    public TEntity? GetById(TId id, params string[] includeProperties)
+    {
+        var query = includeProperties
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
+                _dbSet, (current, includeProperty)
+                    => current.Include(includeProperty));
+        
+        return query.SingleOrDefault(x => x.Id.Equals(id));
+    }
+
+    public TEntity GetFirst(params string[] includeProperties)
+    {
+        var query = includeProperties
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty)
                     => current.Include(includeProperty));
 
-        return query.Where(x => x.Status == status).ToList();
+        return  query.OrderBy(x=>x.CreatedAt).First();
     }
 
-    /// <summary>
-    /// Get all the entities without a specific status
-    /// </summary>
-    /// <param name="status"> The status of the entities </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities without the specific status </returns>
-    public ICollection<T> GetWithoutStatus(StatusEnum status, params string[] includeProperties)
+    public TEntity GetFirst(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
-                _dbSet, (current, includeProperty) 
-                    => current.Include(includeProperty));
-
-        return query.Where(x => x.Status != status).ToList();
-    }
-
-    /// <summary>
-    /// Get the top n entities
-    /// </summary>
-    /// <param name="n"> The number of entities to get </param>
-    /// <param name="status"> The status of the entities </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities with the specific status </returns>
-    public ICollection<T> GetTopNByStatus(int n, StatusEnum status, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty)
                     => current.Include(includeProperty));
-
-        return query.Where(x => x.Status == status).Take(n).ToList();
-    }
-
-    /// <summary>
-    /// Get entities by their ids with specific properties
-    /// </summary>
-    /// <param name="ids"> The ids of the entities to get </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The entities without the specific status </returns>
-    public ICollection<T> GetByIds(IEnumerable<Guid> ids, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
-                _dbSet, (current, includeProperty)
-                    => current.Include(includeProperty));
-
-        return query.Where(x => ids.Contains(x.Id)).ToList();
-    }
-
-    /// <summary>
-    /// Get first entity that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The first entity that satisfy the condition </returns>
-    public T GetFirst(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
-                _dbSet, (current, includeProperty) 
-                    => current.Include(includeProperty));
-
+        
         return query.First(predicate);
     }
 
-    /// <summary>
-    /// Get first entity that satisfy a condition or null
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The first entity that satisfy the condition or null </returns>
-    public T? GetFirstOrDefault(Expression<Func<T, bool>> predicate, params string[] includeProperties)
+    public TEntity? GetFirstOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
+    {
+        try
+        {
+            return GetFirst(predicate, includeProperties);
+        }
+        catch(InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    public TEntity? GetLast(params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty)
                     => current.Include(includeProperty));
-
-        return query.FirstOrDefault(predicate);
+        
+        return query.OrderByDescending(x=>x.CreatedAt).FirstOrDefault();
     }
 
-    /// <summary>
-    /// Get last entity that satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last entity that satisfy the condition </returns>
-    public T GetLast(Expression<Func<T, bool>> predicate, params string[] includeProperties)
+    public TEntity GetLast(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
-                _dbSet, (current, includeProperty) 
-                    => current.Include(includeProperty));
-
-        return query.Last(predicate);
-    }
-
-    /// <summary>
-    /// Get last entity that satisfy a condition or null
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last entity that satisfy the condition or null </returns>
-    public T? GetLastOrDefault(Expression<Func<T, bool>> predicate, params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
-                _dbSet, (current, includeProperty) 
-                    => current.Include(includeProperty));
-
-        return query.LastOrDefault(predicate);
-    }
-
-    /// <summary>
-    /// Get last created entity
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last created entity </returns>
-    public T? GetLastCreated(params string[] includeProperties)
-    {
-        var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty)
                     => current.Include(includeProperty));
-
-        return query.OrderBy(x => x.CreatedAt).FirstOrDefault();
+        
+        return query.OrderByDescending(x=>x.CreatedAt).First(predicate);
     }
 
-    /// <summary>
-    /// Get last updated entity
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The last updated entity </returns>
-    public T? GetLastUpdated(params string[] includeProperties)
+    public TEntity? GetLastOrDefault(Expression<Func<TEntity, bool>> predicate, params string[] includeProperties)
     {
-        var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
-                _dbSet, (current, includeProperty) 
-                    => current.Include(includeProperty));
-
-        return query.OrderBy(x => x.UpdatedAt).FirstOrDefault();
+        try
+        {
+            return GetLast(predicate, includeProperties);
+        }
+        catch(InvalidOperationException)
+        {
+            return null;
+        }
     }
 
-    /// <summary>
-    /// Get random entity
-    /// </summary>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns> The random entity </returns>
-    public T GetRandom(params string[] includeProperties)
+    public TEntity? GetLastUpdated(params string[] includeProperties)
     {
-        var rand = new Random();
-
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty)
                     => current.Include(includeProperty));
-
-        var entities = query.ToList();
-
-        return entities[rand.Next(entities.Count - 1)];
+        
+        return query.OrderByDescending(x=>x.UpdatedAt).FirstOrDefault();
     }
 
-    /// <summary>
-    /// Get entity by id
-    /// </summary>
-    /// <param name="id"> The id of the entity to get </param>
-    /// <param name="includeProperties"> The properties to include related entities </param>
-    /// <returns></returns>
-    public T? GetById(Guid id, params string[] includeProperties)
+    public TEntity GetRandom(params string[] includeProperties)
+    {
+        var random = new Random();
+        
+        var entities = GetAll().ToList();
+        
+        return entities[random.Next(entities.Count)];
+    }
+
+    public ICollection<TEntity> GetPage(int page, int pageSize, params string[] includeProperties)
+    {
+        return GetPage(x=>true, page, pageSize, includeProperties);
+    }
+
+    public ICollection<TEntity> GetPage(Expression<Func<TEntity, bool>> predicate, int page, int pageSize, params string[] includeProperties)
     {
         var query = includeProperties
-            .Where(x=> !string.IsNullOrEmpty(x))
-            .Aggregate<string, IQueryable<T>>(
+            .Where(x=>!string.IsNullOrEmpty(x))
+            .Aggregate<string, IQueryable<TEntity>>(
                 _dbSet, (current, includeProperty)
                     => current.Include(includeProperty));
-        return query.FirstOrDefault(x => x.Id == id);
+        
+        return query
+            .Where(predicate)
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
-    /// <summary>
-    /// Check if any entity satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <returns> True if any entity satisfy the condition, false otherwise </returns>
-    public bool Any(Expression<Func<T, bool>> predicate)
+    public bool Any(Expression<Func<TEntity, bool>> predicate)
     {
         return _dbSet.Any(predicate);
     }
 
-    /// <summary>
-    /// Check if all entities satisfy a condition
-    /// </summary>
-    /// <param name="predicate"> The condition to satisfy </param>
-    /// <returns> True if all entities satisfy the condition, false otherwise </returns>
-    public bool All(Expression<Func<T, bool>> predicate)
+    public bool All(Expression<Func<TEntity, bool>> predicate)
     {
         return _dbSet.All(predicate);
     }
 
-    /// <summary>
-    /// Check if an entity with a specific id exists
-    /// </summary>
-    /// <param name="id"> The id of the entity </param>
-    /// <returns> True if the entity exists, false otherwise </returns>
-    public bool IsWithId(Guid id)
+    public bool IsWithId(TId id)
     {
-        return _dbSet.Any(x=>x.Id.Equals(id));
+        return Any(x => x.Id.Equals(id));
     }
 
-    /// <summary>
-    /// Check if an entity with a specific id is active
-    /// </summary>
-    /// <param name="id"> The id of the entity </param>
-    /// <returns> True if the entity is active, false otherwise </returns>
-    public bool IsActive(Guid id)
+    public bool IsActive(TId id)
     {
-        return GetById(id)?.Status == StatusEnum.Active;
+        return HasStatus(id, StatusEnum.Active);
     }
 
-    /// <summary>
-    /// Check if an entity with a specific id has specific status
-    /// </summary>
-    /// <param name="status"> The status of the entity </param>
-    /// <returns> True if the entity has the specific status, false otherwise </returns>
     public bool IsWithStatus(StatusEnum status)
     {
-        return _dbSet.Any(x=>x.Status == status);
+        return Any(x => x.Status == status);
+    }
+
+    public bool HasStatus(TId id, StatusEnum status)
+    {
+        return Any(x => x.Id.Equals(id) && x.Status == status);
     }
 }

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>12</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>2.0.0</Version>
+        <Title>Ngs.Common.AspNetCore.Infrastructure.PostgreSQL</Title>
+        <RepositoryUrl>https://github.com/NetGlow-Studios/Net.Glow.Studios.Common</RepositoryUrl>
+        <Authors>Net.Glow.Studios</Authors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Ngs.Common.AspNetCore.Infrastructure\Ngs.Common.AspNetCore.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    </ItemGroup>
+
+</Project>
