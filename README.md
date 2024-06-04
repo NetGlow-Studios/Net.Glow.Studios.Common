@@ -30,10 +30,6 @@ Offers extensive tools for creating database infrastructure, including entity co
 
 - **Usage Example**: https://github.com/NetGlow-Studios/Net.Glow.Studios.Common/tree/main/Examples/Ngs.Common.AspNetCore.Infrastructure.Example
 
-### Ngs.Common.AspNetCore.Mongo.Infrastructure
-
-Similar to the previous package but tailored for MongoDB.
-
 ### Ngs.Common.AspNetCore.Notify
 
 Supports email and SMS notifications, including an advanced email builder for constructing HTML email messages easily.
