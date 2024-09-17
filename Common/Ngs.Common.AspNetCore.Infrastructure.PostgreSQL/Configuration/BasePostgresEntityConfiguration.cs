@@ -2,14 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ngs.Common.AspNetCore.Entities;
+using Ngs.Common.AspNetCore.Infrastructure.Extensions;
 
-namespace Ngs.Common.AspNetCore.Infrastructure.Configuration;
+namespace Ngs.Common.AspNetCore.Infrastructure.PostgreSQL.Configuration;
 
 /// <summary>
 /// Base entity configuration
 /// </summary>
 /// <typeparam name="TBase"> Base entity type </typeparam>
-public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : BaseEntity
+public abstract class BasePostgresEntityConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : BaseEntity
 {
     /// <summary>
     /// Configure entity properties
@@ -45,6 +46,7 @@ public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<
                 c => c.ToList()));
         
         builder.Property(x => x.CreatedAt)
+            .HasPostgresColumnDateTimeOffsetType()
             .HasColumnOrder(96)
             .IsRequired();
 
@@ -55,6 +57,7 @@ public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<
             .IsRequired(false);
         
         builder.Property(x => x.UpdatedAt)
+            .HasPostgresColumnDateTimeOffsetType()
             .HasColumnOrder(98)
             .IsRequired();
         

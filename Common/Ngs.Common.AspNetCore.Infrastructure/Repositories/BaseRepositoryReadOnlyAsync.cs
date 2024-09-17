@@ -222,7 +222,7 @@ public abstract class BaseRepositoryReadOnlyAsync<TEntity, TId>(DbContext applic
 
     public async Task<ICollection<TEntity>> GetTopNAsync(StatusEnum status, int number, CancellationToken cancellationToken = default, params string[] includeProperties)
     {
-        return await GetTopNAsync(x=>true, number, cancellationToken, includeProperties);
+        return await GetTopNAsync(x=>x.Status == status, number, cancellationToken, includeProperties);
     }
     
     public async Task<ICollection<TEntity>> GetTopNAsync(Expression<Func<TEntity, bool>> predicate, int number, CancellationToken cancellationToken = default, params string[] includeProperties)

@@ -19,7 +19,7 @@ public class DownloadFileFluentResponse : BaseResponse
     /// <summary>
     /// Content of the file.
     /// </summary>
-    public byte[] FileContent { get; set; } = Array.Empty<byte>();
+    public byte[] FileContent { get; set; } = [];
     
     /// <summary>
     /// Name of the file.

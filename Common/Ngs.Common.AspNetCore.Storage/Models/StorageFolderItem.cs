@@ -176,6 +176,11 @@ public abstract class StorageFolderItem : StorageItem
     public StorageFolder CreateFolder(string name)
     {
         var path = Path.Combine(AbsolutePath, name);
+
+        if (Directory.Exists(path))
+        {
+            return GetFolder(name);
+        }
         
         Directory.CreateDirectory(path);
         
@@ -383,7 +388,7 @@ public abstract class StorageFolderItem : StorageItem
            path = relativePath.Replace(RelativePath, string.Empty);
         }
         
-        var segments = path.Split(Path.DirectorySeparatorChar);
+        var segments = path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
         
         if(segments.Length == 1)
         {
@@ -391,14 +396,14 @@ public abstract class StorageFolderItem : StorageItem
             
             if(found is null)
             {
-                throw new FolderNotFoundException("Folder not found.");
+                throw new FolderNotFoundException($"Folder with the given name: '{segments[0]}' not found.");
             }
             
             return found;
         }
 
         var folder = Folders.First(x => x.Name.Equals(segments[0], StringComparison.CurrentCultureIgnoreCase));
-            
+        
         return folder.FindFolder(string.Join(Path.DirectorySeparatorChar, segments[1..]));
     }
     

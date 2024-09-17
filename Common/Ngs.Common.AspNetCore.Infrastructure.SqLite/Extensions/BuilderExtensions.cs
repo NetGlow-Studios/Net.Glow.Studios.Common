@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ngs.Common.AspNetCore.Infrastructure.Exceptions;
 
-namespace Ngs.Common.AspNetCore.Infrastructure.PostgreSQL.Extensions;
+namespace Ngs.Common.AspNetCore.Infrastructure.SqLite.Extensions;
 
 public static class BuilderExtensions
 {
@@ -11,13 +11,13 @@ public static class BuilderExtensions
     /// Adds the default identity system configuration for the specified user and database context.
     /// </summary>
     /// <param name="services"> The <see cref="IServiceCollection"/> to add the services to. </param>
-    /// <param name="configurationManager"> The <see cref="ConfigurationManager"/> to get the connection string. </param>
+    /// <param name="configuration"> The <see cref="IConfiguration"/> to get the connection string. </param>
     /// <param name="migrationAssembly"> The assembly name for the migrations. </param>
     /// <param name="connectionStringKey"> The key for the connection string in the configuration. </param>
     /// <typeparam name="TDbContext"> The type of the database context. </typeparam>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
-    /// <exception cref="ArgumentNullException"> The <paramref name="configurationManager"/> is null. </exception>
-    public static IServiceCollection AddSqliteConnection<TDbContext>(this IServiceCollection services, ConfigurationManager configurationManager, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
+    /// <exception cref="ArgumentNullException"> The <paramref name="configuration"/> is null. </exception>
+    public static IServiceCollection AddSqliteConnection<TDbContext>(this IServiceCollection services, IConfiguration configuration, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
         where TDbContext : DbContext
     {
         if (string.IsNullOrEmpty(migrationAssembly))
@@ -27,7 +27,7 @@ public static class BuilderExtensions
         }
     
         services.AddDbContext<TDbContext>(options
-            => options.UseSqlite(configurationManager.GetConnectionString(connectionStringKey), x
+            => options.UseSqlite(configuration.GetConnectionString(connectionStringKey), x
                 => x.MigrationsAssembly(migrationAssembly)));
     
         var serviceProvider = services.BuildServiceProvider();
@@ -60,7 +60,7 @@ public static class BuilderExtensions
         ArgumentNullException.ThrowIfNull(dbContextType);
     
         var method = typeof(BuilderExtensions).GetMethod(nameof(AddSqliteConnection),
-            [typeof(IServiceCollection), typeof(ConfigurationManager), typeof(string), typeof(string)])!;
+            [typeof(IServiceCollection), typeof(IConfiguration), typeof(string), typeof(string)])!;
         method.MakeGenericMethod(dbContextType)
             .Invoke(null, [services, configuration, migrationAssembly, connectionStringKey]);
     

@@ -13,11 +13,11 @@ public static class BuilderExtensions
     /// Adds MongoDB connection for the specified database context.
     /// </summary>
     /// <param name="services"> The <see cref="IServiceCollection"/> to add the services to. </param>
-    /// <param name="configurationManager"> The <see cref="ConfigurationManager"/> to get the connection string. </param>
+    /// <param name="configurationManager"> The <see cref="IConfiguration"/> to get the connection string. </param>
     /// <param name="connectionStringKey"></param>
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     public static IServiceCollection AddMongoConnection(this IServiceCollection services, 
-        ConfigurationManager configurationManager, string connectionStringKey = "DefaultConnection") 
+        IConfiguration configurationManager, string connectionStringKey = "DefaultConnection") 
     {
         services.AddSingleton<IMongoClient>(new MongoClient(configurationManager.GetConnectionString(connectionStringKey)));
 

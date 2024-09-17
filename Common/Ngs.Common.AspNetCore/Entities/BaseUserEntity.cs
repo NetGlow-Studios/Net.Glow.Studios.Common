@@ -41,9 +41,9 @@ public abstract class BaseUserEntity<T> : IdentityUser<T> where T : IEquatable<T
     /// <summary>
     /// Date and time when the user's password was last updated.
     /// </summary>
-    public DateTimeOffset LastPasswordUpdateAt { get; set; } 
-    
-    public BaseUserEntity()
+    public DateTimeOffset LastPasswordUpdateAt { get; set; }
+
+    protected BaseUserEntity()
     {
         PersonalName = string.Empty;
         Surname = string.Empty;

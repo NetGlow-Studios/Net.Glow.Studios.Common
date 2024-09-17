@@ -19,7 +19,7 @@ public static class BuilderExtensions
     /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
     /// <exception cref="ArgumentNullException"> The <paramref name="configuration"/> is null. </exception>
     /// <exception cref="ConnectionNotEstablishedException"> The connection to the database could not be established. </exception>
-    public static IServiceCollection AddPostgresConnection<TDbContext>(this IServiceCollection services, IConfigurationManager configuration, int commandTimeoutSeconds = 120, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
+    public static IServiceCollection AddPostgresConnection<TDbContext>(this IServiceCollection services, IConfiguration configuration, int commandTimeoutSeconds = 120, string migrationAssembly = "", string connectionStringKey = "DefaultConnection")
         where TDbContext : DbContext
     {
         if (string.IsNullOrEmpty(migrationAssembly))

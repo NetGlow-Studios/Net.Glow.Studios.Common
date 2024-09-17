@@ -50,7 +50,7 @@ public class BaseUserEntityConfiguration<TUserEntity> : IEntityTypeConfiguration
             .HasColumnOrder(7);
 
         builder.Property(x => x.VerifiedAt)
-            .HasColumnDateTimeOffsetType()
+            .HasPostgresColumnDateTimeOffsetType()
             .HasColumnOrder(8);
 
         builder.Property(x => x.LastPasswordUpdateAt)
